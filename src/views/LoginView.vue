@@ -18,6 +18,13 @@ import { EnvelopeIcon, LockClosedIcon } from '@heroicons/vue/24/outline'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 
+import { useAuthStore } from '../stores/auth';
+import { computed } from 'vue'
+
+
+const authStore = useAuthStore()
+
+
 const formSchema = toTypedSchema(
   z.object({
     email: z.string().email('Please enter a valid email address').min(5),
@@ -34,6 +41,7 @@ const form = useForm({
 
 const onSubmit = form.handleSubmit((values) => {
   console.log('Form submitted!', values)
+  authStore.login()
 })
 </script>
 
