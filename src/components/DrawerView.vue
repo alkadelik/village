@@ -14,7 +14,7 @@ const closeDrawer = () => {
 
 <template>
  <transition name="drawer-slide" mode="out-in" >
-    <div v-if="appStore.drawerIsOpen"  class="fixed top-0 z-20 left-0 h-screen w-full bg-white overflow-y-scroll ">
+    <div v-if="appStore.drawerIsOpen"  class="absolute top-0 z-50 left-0 h-full w-full bg-white overflow-y-scroll ">
         <Button @click="closeDrawer" variant="link" class="inline-flex justify-center"><ChevronLeftIcon class="w-6 h-6 text-black" /></Button>
         <slot></slot>
         <div class="h-32"></div>

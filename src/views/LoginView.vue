@@ -46,7 +46,7 @@ const onSubmit = form.handleSubmit((values) => {
 </script>
 
 <template>
-  <div class="w-full lg:w-3/12 mx-auto px-4 shadow-lg h-screen">
+  <div class=" mx-auto px-4 shadow-lg h-screen">
     <div class="image-container -mx-4"></div>
     <h1 class="text-secondary font-bold text-3xl mt-20">Welcome back</h1>
     <p class="text-secondary text-sm">Enter your email and password to log in</p>

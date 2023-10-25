@@ -18,6 +18,16 @@ import {
   TableRow
 } from '@/components/ui/table'
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+
 const products = [
   {
     name: 'iphone 15',
@@ -49,8 +59,6 @@ const products = [
   }
 ]
 function generateCombinations(arrays, index, currentCombination, result) {
-
-
   if (!Array.isArray(arrays[0])) {
     if (!arrays.length) {
       return
@@ -81,8 +89,15 @@ for (const item of products) {
   productsObject[item.name] = item
 }
 
+// for single products
+const selectedProductName = ref()
+
+const selectedProductObject = computed(() => productsObject[selectedProductName.value] ) 
+
+// multiple products
 const selectedProducts = ref([])
 const specs = ref({})
+
 
 const selectedProductSpecs = ref({})
 
@@ -185,17 +200,32 @@ const handleSelectSpec = (e, product, spec, value) => {
 }
 
 const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.length > 0)
+
 </script>
 
 <template>
   <DrawerView>
-    <div class="px-4 h-full py-6">
-      <Input placeholder="Search templates" />
+    <div class="px-4 h-full py-">
+      <!-- <Input placeholder="Search templates" /> -->
 
       <div class="my-6">
         <h2 class="font-bold text-lg my-6">Select Product</h2>
-        {{ uniqueVariants }}
-        <div class="flex justify-around flex-wrap gap-x-4">
+        <!-- {{ selectedProductName }} {{ selectedProductObject}} -->
+
+        <Select v-model="selectedProductName" >
+          <SelectTrigger>
+            <SelectValue  placeholder="Select a product template" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <!-- <SelectLabel>Fruits</SelectLabel> -->
+              <SelectItem :value="item.name" v-for="(item, idx) in products" :key="idx">
+                {{ item.name }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <!-- <div class="flex justify-around flex-wrap gap-x-4">
           <div
             v-for="(item, key) in products"
             :key="key"
@@ -207,7 +237,7 @@ const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.l
             <div class="rounded-md bg-orange-300 h-32"></div>
             <h3 class="font-medium mt-2 text-lg p-2">{{ item.name }}</h3>
           </div>
-        </div>
+        </div> -->
 
         <!-- <div class="flex justify-end">
           <Button variant="outline" class="text-secondary">next</Button>
@@ -216,26 +246,26 @@ const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.l
 
       <div>
         <h2 class="font-bold text-lg my-6">Select specifications</h2>
-        <p v-if="!selectedProducts.length" class="text-center">Please select a product template</p>
+        <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
 
-        <div v-for="product in selectedProducts" :key="product" class="my-4">
-          <h2 class="font-bold my-2">{{ product }}</h2>
+        <div class="my-4" v-else>
+          <h2 class="font-bold my-2">{{ selectedProductName }}</h2>
           <div
-            v-for="spec in Object.keys(productsObject[product].specs)"
+            v-for="spec in Object.keys(selectedProductObject.specs)"
             :key="spec"
             class="flex justify-between"
           >
             <h4 class="font-medium">{{ spec }}</h4>
             <div class="flex flex-row gap-4">
-              <div v-for="(value, idx) in productsObject[product].specs[spec]" :key="idx">
+              <div v-for="(value, idx) in selectedProductObject.specs[spec]" :key="idx">
                 <input
                   type="checkbox"
-                  :id="`${product}-${value}-${idx}`"
-                  :name="`${product}-${value}-${idx}`"
+                  :id="`${selectedProductName}-${value}-${idx}`"
+                  :name="`${selectedProductName}-${value}-${idx}`"
                   :value="value"
-                  @change="(e) => handleSelectSpec(e, product, spec, value)"
+                  @change="(e) => handleSelectSpec(e, selectedProductName, spec, value)"
                 />
-                <label :for="`${product}-${value}-${idx}`">
+                <label :for="`${selectedProductName}-${value}-${idx}`">
                   <span class="ml-2">{{ value }}</span>
                 </label>
               </div>
