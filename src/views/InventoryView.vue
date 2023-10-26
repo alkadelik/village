@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '../stores/auth'
 import { useAppStore } from '../stores/app'

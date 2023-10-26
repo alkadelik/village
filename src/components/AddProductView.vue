@@ -1,8 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch, reactive } from 'vue'
 
 import DrawerView from '@/components/DrawerView.vue'
-import MultiCombo from '@/components/MultiCombo.vue'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ChevronDownIcon } from '@heroicons/vue/24/outline'

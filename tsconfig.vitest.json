@@ -8,6 +8,9 @@
   },
   "include": [
     "src/views/**/*.vue",
+    "src/layouts/**/*.vue",
+    "src/components/**/*.vue",
+
     // ... other patterns
   ]
 }
