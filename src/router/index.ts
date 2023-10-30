@@ -36,15 +36,15 @@ router.beforeEach(async (to, from) => {
 
   if (
     // make sure the user is authenticated
-    !authStore.isAuthenticated &&
+    !authStore.state.loggedIn &&
     // ❗️ Avoid an infinite redirect
-    to.name !== 'login'
+(    to.name !== 'login')
   ) {
     // redirect the user to the login page
     return { name: 'login' }
   }
   
-  if (authStore.isAuthenticated && to.name == 'login') {
+  if (authStore.state.loggedIn && to.name == 'login') {
     return { name: 'inventory' }
   }
 })

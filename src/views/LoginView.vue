@@ -14,20 +14,20 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { EnvelopeIcon, LockClosedIcon } from '@heroicons/vue/24/outline'
-
+import {useToast} from 'vue-toast-notification';
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 
 import { useAuthStore } from '../stores/auth';
 import { computed } from 'vue'
 
-
+const $toast = useToast();
 const authStore = useAuthStore()
 
 
 const formSchema = toTypedSchema(
   z.object({
-    email: z.string().email('Please enter a valid email address').min(5),
+    username: z.string().email('Please enter a valid email address').min(5),
     password: z
       .string()
       .min(8, 'Password must be at least 8 characters')
@@ -41,7 +41,7 @@ const form = useForm({
 
 const onSubmit = form.handleSubmit((values) => {
   console.log('Form submitted!', values)
-  authStore.login()
+  authStore.login(values)
 })
 </script>
 
@@ -52,11 +52,11 @@ const onSubmit = form.handleSubmit((values) => {
     <p class="text-secondary text-sm">Enter your email and password to log in</p>
 
     <form @submit="onSubmit" class="mt-10">
-      <FormField v-slot="{ componentField }" name="email">
+      <FormField v-slot="{ componentField }" name="username">
         <FormItem>
           <FormLabel><span class="text-secondary text-base font-light">Email Address</span></FormLabel>
           <FormControl>
-            <Input id="email" type="email" hasPrefix class="mt-3 mb-4" v-bind="componentField">
+            <Input id="username" type="email" hasPrefix class="mt-3 mb-4" v-bind="componentField">
               <EnvelopeIcon class="icon w-6 h-6 absolute top-2 left-2" />
             </Input>
           </FormControl>
