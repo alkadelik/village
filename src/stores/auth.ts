@@ -5,16 +5,20 @@ import { defineStore } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { apiLogin } from '@/services/apiServices'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useToast } from 'vue-toast-notification'
 
 export const useAuthStore = defineStore('auth', () => {
-  const $toast = useToast();
+  const $toast = useToast()
   const router = useRouter()
-  
-  const state = ref({
+  const localStorageState = JSON.parse(localStorage.getItem('leyyow') || '').state
+  console.log(localStorageState)
+  const state = computed(() => ({
     isAuthenticated: Boolean(localStorage.getItem('isAuthenticated')),
-    loggedIn: false,
+    loggedIn:
+      localStorage.getItem('leyyow_token') == null
+        ? false
+        : Boolean(localStorage.getItem('leyyow_token')),
     store: {},
     store_slug: '',
     account_id: '',
@@ -23,8 +27,9 @@ export const useAuthStore = defineStore('auth', () => {
     inventory: [],
     has_product: false,
     email_verified: false,
-    loading: false
-  })
+    loading: false,
+    ...localStorageState
+  }))
 
   function login(values: { username?: string; password?: string }) {
     apiLogin(values)
@@ -52,7 +57,6 @@ export const useAuthStore = defineStore('auth', () => {
       })
       .catch(() => {
         $toast.error('Wrong or invalid credentials, or other error. Please try again')
-
       })
       .finally(() => {
         state.value.loading = false
@@ -66,13 +70,15 @@ export const useAuthStore = defineStore('auth', () => {
     //     this.isAuthenticated = false;
     //   }
   }
- function logout() {
-        state.value.loggedIn = false
-        localStorage.removeItem('leyyow_token')
-        // maybe reset state?
+  function logout() {
+    state.value.loggedIn = false
+    localStorage.removeItem('leyyow_token')
+    // maybe reset state?
 
-        router.push('/login')
-      }
-  return {state, login, logout }
-  
+    router.push('/login')
+  }
+  return { state, login, logout }
 })
+
+// const myStore = useAuthStore();
+// loadStateFromLocalStorage(myStore);

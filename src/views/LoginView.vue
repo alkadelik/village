@@ -42,6 +42,7 @@ const form = useForm({
 const onSubmit = form.handleSubmit((values) => {
   console.log('Form submitted!', values)
   authStore.login(values)
+  
 })
 </script>
 

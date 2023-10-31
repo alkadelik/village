@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, reactive } from 'vue'
+import { useToast } from 'vue-toast-notification'
 
 import DrawerView from '@/components/DrawerView.vue'
 import { Input } from '@/components/ui/input'
@@ -26,6 +27,39 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { useAuthStore } from '../stores/auth'
+
+import { createProduct } from '@/services/apiServices'
+
+interface Product {
+  product_name?: string
+  product_type?: string
+  description?: string
+  price?: number
+  total_stock?: number
+  product_image?: string
+  has_variant?: boolean
+  first_variant_name?: string
+  second_variant_name?: string
+  first_variant?: string //128GB,256GB,512GB,1TB,
+  second_variant?: string //Blue,Pink,Yellow,Green,Black,
+  variant_options?: string
+  display?: boolean
+  discount?: string
+  discount_type?: string
+  has_discount?: boolean
+  slug?: string
+  id?: number
+  store?: string
+  temp_id?: string
+  category?: string
+  rating?: string
+  review_count?: number
+  rate_tracking?: string
+}
+
+const authStore = useAuthStore()
+const $toast = useToast()
 
 const products = [
   {
@@ -90,13 +124,13 @@ for (const item of products) {
 
 // for single products
 const selectedProductName = ref()
+const variants = ref({})
 
-const selectedProductObject = computed(() => productsObject[selectedProductName.value] ) 
+const selectedProductObject = computed(() => productsObject[selectedProductName.value])
 
 // multiple products
 const selectedProducts = ref([])
 const specs = ref({})
-
 
 const selectedProductSpecs = ref({})
 
@@ -200,6 +234,64 @@ const handleSelectSpec = (e, product, spec, value) => {
 
 const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.length > 0)
 
+const handleChange = (e, variantName, property) => {
+  // console.log(e.target.value, variantName)
+
+  variants.value[variantName] = { ...variants.value[variantName], [property]: e.target.value }
+
+  console.log(variants.value)
+}
+
+const stringifiedVariants = computed(() => {
+  
+  let result = ""
+
+
+  for(let variant in variants.value) {
+    result += `${variant},${variants.value[variant].qty},${variants.value[variant].price};`
+  }
+
+  return result
+})
+
+const handleSubmit = () => {
+  const inventoryItem: Product = {}
+  let specs = Object.keys(selectedProductObject.value.specs)
+
+  inventoryItem.product_name = selectedProductName.value
+  inventoryItem.has_variant = true
+  inventoryItem.first_variant_name = specs[0]
+  inventoryItem.second_variant_name = specs[1]
+  inventoryItem.first_variant = selectedProductObject.value.specs[specs[0]]
+  inventoryItem.second_variant = selectedProductObject.value.specs[specs[1]]
+  inventoryItem.slug = authStore.state.store.slug
+  inventoryItem.store = authStore.state.store.store_name
+  inventoryItem.variant_options = stringifiedVariants.value
+  inventoryItem.product_image = "/media/static/images/default_product.png"
+  inventoryItem.category = "gadgets"
+  // compute variants
+
+console.log(inventoryItem, stringifiedVariants)
+  createNewProduct(inventoryItem)
+
+  // inventoryItem.product_image =
+}
+
+const createNewProduct = (new_product) => {
+  // creates new product with the image only
+  createProduct(new_product)
+    .then((res) => {
+      $toast.success('product added successfully')
+      // this.new_product.id = res.data.id
+      // this.new_product.temp_id = res.data.id; // when creating multiple products at a time
+    })
+    .catch((err) => {
+      $toast.error('error something happened')
+    })
+    .finally(() => {
+      // this.uploading_image = false;
+    })
+}
 </script>
 
 <template>
@@ -209,11 +301,11 @@ const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.l
 
       <div class="my-6">
         <h2 class="font-bold text-lg my-6">Select Product</h2>
-        <!-- {{ selectedProductName }} {{ selectedProductObject}} -->
+       {{stringifiedVariants}} {{ selectedProductName }} {{ selectedProductObject }} {{ variants }} {{ uniqueVariants }}
 
-        <Select v-model="selectedProductName" >
+        <Select v-model="selectedProductName">
           <SelectTrigger>
-            <SelectValue  placeholder="Select a product template" />
+            <SelectValue placeholder="Select a product template" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -255,8 +347,12 @@ const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.l
             class="flex justify-between"
           >
             <h4 class="font-medium">{{ spec }}</h4>
-            <div class="flex flex-row gap-4">
-              <div v-for="(value, idx) in selectedProductObject.specs[spec]" :key="idx">
+            <div class="flex flex-row gap-2">
+              <div
+                class="no-wrap flex"
+                v-for="(value, idx) in selectedProductObject.specs[spec]"
+                :key="idx"
+              >
                 <input
                   type="checkbox"
                   :id="`${selectedProductName}-${value}-${idx}`"
@@ -293,8 +389,22 @@ const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.l
               <TableBody>
                 <TableRow v-for="(variants, idx) in uniqueVariants[item]" :key="idx">
                   <TableCell class="font-medium"> {{ variants }} </TableCell>
-                  <TableCell><Input type="number" class="w-20" /></TableCell>
-                  <TableCell><Input type="number" class="w-20" /></TableCell>
+                  <TableCell
+                    ><Input
+                      type="number"
+                      :name="`${variants}-qty`"
+                      :id="`${variants}-qty`"
+                      class="w-20"
+                      @change="(e) => handleChange(e, variants, 'qty')"
+                  /></TableCell>
+                  <TableCell
+                    ><Input
+                      type="number"
+                      :name="`${variants}-price`"
+                      :id="`${variants}-price`"
+                      class="w-20"
+                      @change="(e) => handleChange(e, variants, 'price')"
+                  /></TableCell>
                   <TableCell class="text-right">
                     <Button variant="link" class="underline text-gray-400">Clear</Button>
                   </TableCell>
@@ -340,6 +450,8 @@ const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.l
       </CollapsibleContent>
     </Collapsible> -->
       </div>
+
+      <Button class="w-full mt-8" @click="handleSubmit">Create Product</Button>
     </div>
   </DrawerView>
 </template>

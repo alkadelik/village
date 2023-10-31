@@ -2,6 +2,21 @@
 import { RouterLink, RouterView } from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
 import { Button } from '@/components/ui/button'
+import { useAuthStore } from './stores/auth'
+
+
+const authStore = useAuthStore
+authStore().$subscribe((mutation, state) => {
+  // import { MutationType } from 'pinia'
+  mutation.type // 'direct' | 'patch object' | 'patch function'
+  // same as cartStore.$id
+  mutation.storeId // 'cart'
+  // only available with mutation.type === 'patch object'
+  // mutation.payload // patch object passed to cartStore.$patch()
+
+  // persist the whole state to the local storage whenever it changes
+  localStorage.setItem('leyyow', JSON.stringify(state))
+})
 </script>
 
 <template>
