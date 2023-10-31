@@ -21,7 +21,7 @@ const showAddProductView = () => {
 </script>
 
 <template>
-  <AppLayout class="relative p-4" pageTitle="Inventory" >
+  <AppLayout class="relative p-4">
     <div class="h-screen flex justify-center items-center">
       <div class="text-center w-8/12">
         <img

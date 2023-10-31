@@ -2,15 +2,11 @@
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '../stores/auth'
 import { useAppStore } from '../stores/app'
-import {
-  ChartPieIcon,
-  BookmarkIcon,
-  PresentationChartLineIcon,
-  UserGroupIcon
-} from '@heroicons/vue/24/outline'
+import { fetchOrders } from '@/services/apiServices'
 import AppLayout from '@/layouts/AppLayout.vue'
+import AddSaleView from '@/components/AddSaleView.vue'
 import AddProductView from '@/components/AddProductView.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
@@ -18,10 +14,21 @@ const appStore = useAppStore()
 const showAddProductView = () => {
   appStore.drawerIsOpen = true
 }
+
+
+
+onMounted(() => {
+  fetchOrders() // do this in orders in orders, maybe?
+    .then((res) => {
+      
+      authStore.state.orders = res.data
+      authStore.state.has_sale = authStore.state.orders.length > 0 
+    })
+})
 </script>
 
 <template>
-  <AppLayout class="relative p-4" pageTitle="Inventory" >
+  <AppLayout class="relative p-4"  pageTitle="Sales">
     <div class="h-screen flex justify-center items-center">
       <div class="text-center w-8/12">
         <img
@@ -35,6 +42,6 @@ const showAddProductView = () => {
       </div>
     </div>
 
-    <AddProductView />
+    <AddSaleView />
   </AppLayout>
 </template>

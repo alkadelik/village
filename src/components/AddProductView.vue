@@ -295,7 +295,7 @@ const createNewProduct = (new_product) => {
 </script>
 
 <template>
-  <DrawerView>
+  <DrawerView :step="0">
     <div class="px-4 h-full py-">
       <!-- <Input placeholder="Search templates" /> -->
 

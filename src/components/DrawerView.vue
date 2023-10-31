@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
 import { Button } from '@/components/ui/button'
 
@@ -7,19 +6,30 @@ import { useAppStore } from '../stores/app'
 
 const appStore = useAppStore()
 
+const props = defineProps(['step', 'reduceStep'])
+
 const closeDrawer = () => {
-  appStore.drawerIsOpen = false
+  if (props.step == 0) {
+    appStore.drawerIsOpen = false
+  }else {
+    props.reduceStep()
+  }
 }
 </script>
 
 <template>
- <transition name="drawer-slide" mode="out-in" >
-    <div v-if="appStore.drawerIsOpen"  class="absolute top-0 z-50 left-0 h-full w-full bg-white overflow-y-scroll ">
-        <Button @click="closeDrawer" variant="link" class="inline-flex justify-center"><ChevronLeftIcon class="w-6 h-6 text-black" /></Button>
-        <slot></slot>
-        <div class="h-32"></div>
+  <transition name="drawer-slide" mode="out-in">
+    <div
+      v-if="appStore.drawerIsOpen"
+      class="overflow-y-hidden absolute top-0 z-50 left-0 h-full w-full bg-white"
+    >
+      <Button @click="closeDrawer" variant="link" class="inline-flex justify-center"
+        ><ChevronLeftIcon class="w-6 h-6 text-black"
+      /></Button>
+      <slot></slot>
+      <div class="h-32"></div>
     </div>
- </transition>
+  </transition>
 </template>
 
 <style scoped>
