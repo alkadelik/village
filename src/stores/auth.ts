@@ -11,7 +11,7 @@ import { useToast } from 'vue-toast-notification'
 export const useAuthStore = defineStore('auth', () => {
   const $toast = useToast()
   const router = useRouter()
-  const localStorageState = JSON.parse(localStorage.getItem('leyyow') || '').state
+  const localStorageState = JSON.parse(localStorage.getItem('leyyow') || '{}')
   console.log(localStorageState)
   const state = computed(() => ({
     isAuthenticated: Boolean(localStorage.getItem('isAuthenticated')),
@@ -22,9 +22,10 @@ export const useAuthStore = defineStore('auth', () => {
     store: {},
     store_slug: '',
     account_id: '',
-    custormers: [],
+    customers: [],
     has_customer: false,
     inventory: [],
+    productTemplates: [], 
     has_product: false,
     email_verified: false,
     loading: false,
@@ -44,12 +45,13 @@ export const useAuthStore = defineStore('auth', () => {
         state.value.store = store
         state.value.store_slug = res.data.slug
         state.value.account_id = res.data.account_id
-        state.value.custormers = res.data.customers
+        state.value.customers = res.data.customers
         state.value.inventory = res.data.inventory
 
         if (store.verified[0] == 0) {
           state.value.email_verified = false
         }
+        localStorage.setItem('leyyow', JSON.stringify(state.value))
 
         router.push('/inventory')
 

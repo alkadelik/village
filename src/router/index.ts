@@ -48,7 +48,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
   const authStore = useAuthStore()
-
+if(!authStore.state) return
   if (
     // make sure the user is authenticated
     !authStore.state.loggedIn &&

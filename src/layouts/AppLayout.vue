@@ -5,20 +5,34 @@ import {
   ChartPieIcon,
   BookmarkIcon,
   PresentationChartLineIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  PlusIcon
 } from '@heroicons/vue/24/outline'
-defineProps(['pageTitle'])
+import { useAppStore } from '../stores/app'
+defineProps(['pageTitle', 'hasNavBtn', 'navBtnText', 'stateKey', ])
 const authStore = useAuthStore()
+const appStore = useAppStore()
+
+const openDrawer = (key) => {
+  appStore.drawerIsOpen = true
+  appStore[key] = true
+}
 </script>
 
 <template>
-  <div class="relative p-4">
-    <div class="flex justify-between">
+  <div class=" h-screen relative p-4 overflow-hidden">
+    <div class="flex justify-between ">
       <h2 class="font-bold text-xl text-secondary">{{ pageTitle }}</h2>
-      <Button variant="destructive" size="sm" @click="authStore.logout()">Logout</Button>
+      <div class="w-6/12 gap-3 justify-end flex">
+        <Button v-if="hasNavBtn" size="sm" @click="openDrawer(stateKey, stateKey2)"><PlusIcon class="w-4 h-4" /></Button>
+        <Button variant="destructive" size="sm" @click="authStore.logout()">Logout</Button>
+      </div>
     </div>
 
+<div class="mt-6 h-5/6 overflow-y-scroll">
     <slot></slot>
+
+</div>
 
     <div class="fixed left-0 bottom-0 shadow-2xl h-20 w-full">
       <ul class="flex justify-between px-6 py-4 text-gray-400">

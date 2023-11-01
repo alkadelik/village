@@ -35,6 +35,7 @@ export const createImageUrl = `${prefix}/inventory/product/image/create/`
 export const createProductUrl = `${prefix}/inventory/product/create/`
 export const initialiseProductUrl = `${prefix}product/initialise/`
 export const inventoryUrl = `${prefix}/inventory/product/`
+export const inventoryTemplatesUrl = `${prefix}/inventory/templates/`
 export const updateProductUrl = `${prefix}/inventory/product/update/`
 export const deleteProductUrl = `${prefix}/inventory/product/`
 

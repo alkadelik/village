@@ -38,9 +38,15 @@ export const fetchCampaignDetails = (id) => {
 	})
 }
 export const fethcStoreInventory = (slug) => {
-	axios({
+	return axios({
 		method: "get",
-		url: `${urls.inventoryUrl}${slug}/`,
+		url: `${urls.inventoryUrl}/`,
+	})
+}
+export const fethcStoreTemplates = (slug) => {
+	return axios({
+		method: "get",
+		url: `${urls.inventoryTemplatesUrl}/`,
 	})
 }
 export const fetchMetrics = (period) => {

@@ -13,6 +13,7 @@ const appStore = useAppStore()
 
 const showAddProductView = () => {
   appStore.drawerIsOpen = true
+  appStore.showAddSaleView = true
 }
 
 
@@ -28,7 +29,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppLayout class="relative p-4"  pageTitle="Sales">
+  <AppLayout class="relative p-4"  pageTitle="Sales" stateKey="showAddSaleView"  navBtnText="add Sale" :hasNavBtn="true">
     <div class="h-screen flex justify-center items-center">
       <div class="text-center w-8/12">
         <img
@@ -38,10 +39,10 @@ onMounted(() => {
         />
         <h3 class="text-xl font-bold">No Products Added</h3>
         <p class="font-light my-3">Add products to your store so you can take orders easily.</p>
-        <Button class="my-4 w-10/12" size="lg" @click="showAddProductView">Add Product</Button>
+        <Button class="my-4 w-10/12" size="lg" @click="showAddProductView">Add Sale</Button>
       </div>
     </div>
 
-    <AddSaleView />
+    <AddSaleView v-if="appStore.showAddSaleView" />
   </AppLayout>
 </template>

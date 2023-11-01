@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 import DrawerView from '@/components/DrawerView.vue'
+import NestedAddCustomerView from '@/components/NestedAddCustomerView.vue'
+import CheckoutForm from '@/components/CheckoutForm.vue'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useAppStore } from '../stores/app'
 import { PencilSquareIcon, PlusIcon, MinusIcon } from '@heroicons/vue/24/outline'
 
 import {
@@ -16,6 +20,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 const authStore = useAuthStore()
+const appStore = useAppStore()
 
 const cart_map = ref([])
 
@@ -24,12 +29,20 @@ const activeStep = ref(0)
 
 const toggleProductInCart = (id) => {
   let index = cart_map.value.indexOf(id)
-  index == -1 ? cart_map.value = [...cart_map.value, id]: ''
+  index == -1 ? (cart_map.value = [...cart_map.value, id]) : ''
 }
 
 const goToCart = () => {
   //   authStore.state.cart_map = cart_map
   activeStep.value = 1
+}
+const goToCustomer = () => {
+  //   authStore.state.cart_map = cart_map
+  activeStep.value = 2
+}
+const goToCheckout = () => {
+  //   authStore.state.cart_map = cart_map
+  activeStep.value = 3
 }
 
 const reduceStep = () => {
@@ -38,10 +51,9 @@ const reduceStep = () => {
 
 const unpacked_cart = ref([])
 
-
 watch(cart_map, () => {
-    let temp = []
-    if (cart_map.value.length > 0) {
+  let temp = []
+  if (cart_map.value.length > 0) {
     let inventory = authStore.state.inventory
 
     cart_map.value.map((item_id) => {
@@ -58,18 +70,26 @@ watch(cart_map, () => {
 })
 
 const increase = (idx) => {
-    unpacked_cart.value[idx].count++
+  unpacked_cart.value[idx].count++
 }
 
 const decrease = (idx) => {
-    unpacked_cart.value[idx].count++
+  unpacked_cart.value[idx].count--
 }
 
-
+const customer_id = ref()
 </script>
 
 <template>
-  <DrawerView drawerTitle="Select products" :step="activeStep" :reduceStep="reduceStep">
+  <DrawerView
+    drawerTitle="Select products"
+    :step="activeStep"
+    :reduceStep="reduceStep"
+    stateKey="showNestedAddCustomerView"
+    :showAddCustomerButton="activeStep == 2"
+  >
+    <!-- {{authStore.state.inventory[4]}} -->
+
     <div v-show="activeStep == 0" class="px-4 h-full relative">
       <p class="text-center my-3">select products for this sale</p>
       <div class="form products">
@@ -86,7 +106,7 @@ const decrease = (idx) => {
                 <!-- <img :src="baseUrl + product.product_image" alt="product image" /> -->
                 <!-- <img src="../assets/images/inventory-product-image-1.png" alt=""> -->
               </div>
-              <p class="product-name">{{ product.product_name }}</p>
+              <p class="product-name truncate">{{ product.product_name }}</p>
             </div>
           </label>
         </div>
@@ -96,7 +116,6 @@ const decrease = (idx) => {
         <Button class="w-full" @click="goToCart">View Cart</Button>
       </div>
     </div>
-    <!-- {{unpacked_cart}} -->
     <div v-show="activeStep == 1" class="px-4 h-full relative overflow-y-scroll">
       <p class="text-center my-3">select quantity and specifications</p>
 
@@ -119,7 +138,7 @@ const decrease = (idx) => {
             <PencilSquareIcon class="w-4 h-4" />
           </div>
           <div>
-            <div class="flex justify-between my-3">
+            <div class="flex justify-between my-3" v-if="item.first_variant && item.second_variant">
               <Select>
                 <SelectTrigger class="w-[100px]">
                   <SelectValue :placeholder="`${item.first_variant_name}`" />
@@ -172,10 +191,54 @@ const decrease = (idx) => {
         </div>
       </div>
 
-         <div class="absolute bottom-36 left-0 w-full px-4">
-        <Button class="w-full" @click="goToCart">Select or add Buyer</Button>
+      <div class="absolute bottom-36 left-0 w-full px-4">
+        <Button class="w-full" @click="goToCustomer">Select or add Buyer</Button>
       </div>
     </div>
+    <div v-show="activeStep == 2">
+      <p class="text-center my-3">select customer to sell to</p>
+
+      <div class="p-2">
+        <Input class="w-full" placeholder="Type customer name to search" />
+
+        <div
+          class="select-customer-wrapper"
+          v-for="(customer, i) in authStore.state.customers"
+          :key="i"
+          @click="selectFunction(customer.id, customer)"
+        >
+          <div class="list_style_1 my-4" :class="{ active: customer_id == customer.id }">
+            <div style="display: flex">
+              <div class="customer_img">
+                <img src="@/assets/images/icons/select-customer-author-icon.svg" alt="" />
+              </div>
+              <h3>{{ customer.first_name }} {{ customer.last_name }}</h3>
+            </div>
+            <div class="customer_details font-light">
+              <p class="black">
+                {{ customer.house_no }} {{ customer.line1 }} {{ customer.line2 }}
+                {{ customer.city }}
+              </p>
+              <p>{{ customer.phone }} &#x2022; {{ customer.email }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="absolute bottom-36 left-0 w-full px-4">
+          <Button class="w-full" @click="goToCheckout">Go to checkout </Button>
+        </div>
+        <NestedAddCustomerView v-if="appStore.showNestedAddCustomerView" />
+      </div>
+    </div>
+    <div v-show="activeStep == 3">
+      <p class="text-center my-3">Checkout</p>
+
+      <CheckoutForm />
+       <div class="absolute bottom-36 left-0 w-full px-4">
+          <Button class="w-full" @click="goToCheckout">Save </Button>
+        </div>
+    </div>
+    <div></div>
   </DrawerView>
 </template>
 
@@ -352,4 +415,39 @@ img {
   justify-content: center;
   min-height: 32px;
 }
+
+/* customer card styles  */
+
+.select-customer-wrapper {
+  cursor: pointer;
+}
+.list_style_1 {
+  /* display: flex; */
+  /* flex-direction: row; */
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #4caf50; /* active */
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+.customer_details,
+.all-products {
+  /* padding-left: 15px; */
+  text-align: left;
+}
+h3 {
+  margin: 7px 0 0 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #445b54;
+}
+.customer_details p {
+  margin: 0;
+  padding: 2px 0;
+}
+.active {
+  border: 1px solid #4caf50;
+}
+
+
 </style>

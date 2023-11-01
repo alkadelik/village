@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, reactive } from 'vue'
+import { ref, computed, watch, reactive, onMounted } from 'vue'
 import { useToast } from 'vue-toast-notification'
 
 import DrawerView from '@/components/DrawerView.vue'
@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/select'
 import { useAuthStore } from '../stores/auth'
 
-import { createProduct } from '@/services/apiServices'
+import { createProduct, fethcStoreTemplates, fethcStoreInventory } from '@/services/apiServices'
 
 interface Product {
   product_name?: string
@@ -56,41 +56,87 @@ interface Product {
   rating?: string
   review_count?: number
   rate_tracking?: string
+  template_id?: number
 }
 
 const authStore = useAuthStore()
 const $toast = useToast()
 
-const products = [
-  {
-    name: 'iphone 15',
-    specs: {
-      color: ['black', 'silver', 'grey'],
-      capacity: ['128GB', '256GB', '512GB', '1TB']
-    }
-  },
-  {
-    name: 'iphone 15 pro',
-    specs: {
-      color: ['black', 'silver', 'grey'],
-      capacity: ['128GB', '256GB', '512GB', '1TB']
-    }
-  },
-  {
-    name: 'iphone 15 pro max',
-    specs: {
-      color: ['black', 'silver', 'grey'],
-      capacity: ['128GB', '256GB', '512GB', '1TB']
-    }
-  },
-  {
-    name: 'iphone 15 plus',
-    specs: {
-      color: ['black', 'silver', 'grey'],
-      capacity: ['128GB', '256GB', '512GB', '1TB']
-    }
+onMounted(() => {
+  fethcStoreTemplates(authStore.state.account_id).then((res) => {
+    console.log(res.data)
+
+    authStore.state.productTemplates = res.data
+    productTemplates.value = res.data
+    // products.value = res.data
+  })
+
+  //  fethcStoreInventory(authStore.state.account_id).then(res => {
+  //   console.log(res)
+  //  })
+})
+
+// const products = [
+//   {
+//     name: 'iphone 15',
+//     specs: {
+//       color: ['black', 'silver', 'grey'],
+//       capacity: ['128GB', '256GB', '512GB', '1TB']
+//     }
+//   },
+//   {
+//     name: 'iphone 15 pro',
+//     specs: {
+//       color: ['black', 'silver', 'grey'],
+//       capacity: ['128GB', '256GB', '512GB', '1TB']
+//     }
+//   },
+//   {
+//     name: 'iphone 15 pro max',
+//     specs: {
+//       color: ['black', 'silver', 'grey'],
+//       capacity: ['128GB', '256GB', '512GB', '1TB']
+//     }
+//   },
+//   {
+//     name: 'iphone 15 plus',
+//     specs: {
+//       color: ['black', 'silver', 'grey'],
+//       capacity: ['128GB', '256GB', '512GB', '1TB']
+//     }
+//   }
+// ]
+
+const productTemplates = ref([])
+const productsObject = computed(() => {
+  let obj = {}
+  for (const item of products.value) {
+    obj[item.product_name] = item
   }
-]
+  return obj
+})
+
+// const products = ref([])
+const products = computed(() => {
+  if (!productTemplates.value.length) return []
+  let res = []
+  productTemplates.value.map((item) => {
+    // let productObject = item
+    let obj = {}
+
+    obj.product_name = item.product_name
+    obj.id = item.id
+    obj.specs = {
+      [item.first_variant_name]: item.first_variant.split(','),
+      [item.second_variant_name]: item.second_variant.split(',')
+    }
+    res.push(obj)
+  })
+
+  // // compute products object
+
+  return res
+})
 function generateCombinations(arrays, index, currentCombination, result) {
   if (!Array.isArray(arrays[0])) {
     if (!arrays.length) {
@@ -116,17 +162,15 @@ function generateCombinations(arrays, index, currentCombination, result) {
   }
 }
 
-const productsObject = {}
-
-for (const item of products) {
-  productsObject[item.name] = item
-}
-
 // for single products
-const selectedProductName = ref()
+const selectedProductId = ref()
+const selectedProductName = computed(() => {
+  if (!selectedProductId.value) return ''
+  return products.value.find((item) => item.id == Number(selectedProductId.value)).product_name
+})
 const variants = ref({})
 
-const selectedProductObject = computed(() => productsObject[selectedProductName.value])
+const selectedProductObject = computed(() => productsObject.value[selectedProductName.value])
 
 // multiple products
 const selectedProducts = ref([])
@@ -243,11 +287,9 @@ const handleChange = (e, variantName, property) => {
 }
 
 const stringifiedVariants = computed(() => {
-  
-  let result = ""
+  let result = ''
 
-
-  for(let variant in variants.value) {
+  for (let variant in variants.value) {
     result += `${variant},${variants.value[variant].qty},${variants.value[variant].price};`
   }
 
@@ -262,16 +304,17 @@ const handleSubmit = () => {
   inventoryItem.has_variant = true
   inventoryItem.first_variant_name = specs[0]
   inventoryItem.second_variant_name = specs[1]
-  inventoryItem.first_variant = selectedProductObject.value.specs[specs[0]]
-  inventoryItem.second_variant = selectedProductObject.value.specs[specs[1]]
+  inventoryItem.first_variant = selectedProductObject.value.specs[specs[0]].join(',')
+  inventoryItem.second_variant = selectedProductObject.value.specs[specs[1]].join(',')
   inventoryItem.slug = authStore.state.store.slug
   inventoryItem.store = authStore.state.store.store_name
   inventoryItem.variant_options = stringifiedVariants.value
-  inventoryItem.product_image = "/media/static/images/default_product.png"
-  inventoryItem.category = "gadgets"
+  inventoryItem.template_id = selectedProductObject.value.id
+  // inventoryItem.product_image = "/media/static/images/default_product.png"
+  // inventoryItem.category = "gadgets"
   // compute variants
 
-console.log(inventoryItem, stringifiedVariants)
+  console.log(inventoryItem, stringifiedVariants)
   createNewProduct(inventoryItem)
 
   // inventoryItem.product_image =
@@ -301,17 +344,17 @@ const createNewProduct = (new_product) => {
 
       <div class="my-6">
         <h2 class="font-bold text-lg my-6">Select Product</h2>
-       {{stringifiedVariants}} {{ selectedProductName }} {{ selectedProductObject }} {{ variants }} {{ uniqueVariants }}
+        <!-- {{ selectedProductObject }} {{}} -->
 
-        <Select v-model="selectedProductName">
+        <Select v-model="selectedProductId">
           <SelectTrigger>
             <SelectValue placeholder="Select a product template" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <!-- <SelectLabel>Fruits</SelectLabel> -->
-              <SelectItem :value="item.name" v-for="(item, idx) in products" :key="idx">
-                {{ item.name }}
+              <SelectItem :value="`${item.id}`" v-for="(item, idx) in products" :key="idx">
+                {{ item.product_name }}
               </SelectItem>
             </SelectGroup>
           </SelectContent>
@@ -334,7 +377,7 @@ const createNewProduct = (new_product) => {
           <Button variant="outline" class="text-secondary">next</Button>
         </div> -->
       </div>
-
+            
       <div>
         <h2 class="font-bold text-lg my-6">Select specifications</h2>
         <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
