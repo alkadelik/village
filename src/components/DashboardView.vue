@@ -1,0 +1,177 @@
+<script setup lang="ts"></script>
+
+<template>
+    	<div class="container dashboard-top-margin">
+    <div class="header">
+      <h3>{{ store.store_name }}</h3>
+    </div>
+		<section id="dashboard">
+			<div class="container">
+				<div class="welcome">
+					<h3>Good {{ timeOfDay }}</h3>
+          <p class="">Here’s how is your bussiness is doing</p>
+				</div>
+  
+				<div class="report-wrapper">
+					<div class="report-card" v-for="data, i in metrics" :key="i">
+						<div class="img-wrapper">
+              <component :is="data.icon" />
+						</div>
+						<div class="content-wrapper">
+							<p>{{ data.title }}</p>
+							<div class="total">
+								<h3 class="h3"><span v-if="data.currency == 1">&#8358;</span>{{ data.data }}</h3>
+								<span class="triangle-arrow">
+                  {{ data.up = 0 ? "-" : "+" }} {{ data.percent }}%
+                </span>
+							</div>
+							<span>vs {{ data.period }}</span>
+						</div>
+					</div>
+				</div>
+  
+				<div class="dashboard-chart-wrapper">
+					<div class="dashboard-chart-header">
+            <div class="content-wrapper">
+              <div class="total">
+                <!-- <p>Total sale</p>
+                <span class="triangle-arrow">+25%</span> -->
+              </div>
+              <!-- <h3 class="h3">N200,000.00</h3> -->
+            </div>
+            <div class="form">
+              <select v-model="period" @change="updateMetrics">
+                <option value="0">Today</option>
+                <option value="1">This week</option>
+                <option value="2">This month</option>
+                <option value="3">This year</option>
+                <!-- <option value="4">Year to date</option> -->
+              </select>
+            </div>
+					</div>
+					<!-- <LineChartGenerator
+						:chart-options="chartOptions"
+						:chart-data="chartData"
+						:chart-id="chartId"
+						:dataset-id-key="datasetIdKey"
+						:plugins="plugins"
+						:css-classes="cssClasses"
+						:styles="styles"
+						:width="width"
+						:height="height"
+					/> -->
+					<!-- <span class="space">YOU made an extra <strong>N20,000</strong> this week</span> -->
+				</div>
+			</div>
+		</section>
+	</div>
+</template>
+
+<style scoped>
+.dashboard-top-margin {
+  margin-top: 120px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  z-index: 2;
+}
+.welcome {
+  text-align: left;
+}
+.report-wrapper {
+  background: #F9F9F9;
+  border: 0.5px solid #F9F9F9;
+  border-radius: 16px;
+  padding: 14px 14px 24px;
+  margin-bottom: 16px;
+}
+.report-card {
+  padding: 16px 16px;
+  display: grid;
+  grid-template-columns: 48px auto;
+  align-items: self-start;
+  grid-gap: 14px;
+  text-align: left;
+  background: #ffffff;
+  border: 0.5px solid #E2E8F0;
+  box-shadow: -2px 8px 16px rgba(181, 181, 181, 0.08);
+  border-radius: 8px;
+}
+.report-card p, .report-card h3 {
+  margin: 0;
+}
+.report-card:not(:last-of-type) {
+  margin-bottom: 16px;
+}
+.img-wrapper {
+  background: rgba(0, 179, 255, 0.08); /* blue */
+  background: rgba(255, 195, 80, 0.08); /* yellow */
+  background: rgba(248, 78, 140, 0.08); /* pink */
+  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+p {
+  color: #9C9C9C;
+}
+.total {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 5px 0 0;
+  font-size: 12px;
+  font-weight: bold;
+}
+.triangle-arrow::before {
+  /* content: url(http://127.0.0.1:8000/img/dashboard-triangle-icon.97f0869f.svg); */
+  position: relative;
+  left: -4px;
+}
+::before, ::after {
+  box-sizing: border-box;
+}
+.total span {
+  color: #4CAF50;
+}
+.dashboard-chart-header {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0 40px;
+}
+.dashboard-chart-header p, h3 {
+  margin: 0;
+}
+.space {
+  margin-bottom: 50px;
+}
+select {
+  /* background: url(http://127.0.0.1:8000/img/dropdown-arrow.7cfba250.svg), #fff; */
+  background-position-x: 0%, 0%;
+  background-position-y: 0%, 0%;
+  background-repeat: repeat, repeat;
+  background-size: auto, auto;
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: auto 20%;
+  height: 45px;
+  padding: 5px 30px 5px 10px;
+  color: #9C9C9C;
+  outline: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  border: 1px solid #C9C9C9 !important;
+  border-radius: 7.79618px;
+  }
+</style>

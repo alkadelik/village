@@ -9,6 +9,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useAppStore } from '../stores/app'
 import { PencilSquareIcon, PlusIcon, MinusIcon } from '@heroicons/vue/24/outline'
+import { saveOrder, saveOrderItems } from '@/services/apiServices'
 
 import {
   Select,
@@ -19,19 +20,62 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { boolean } from 'zod'
+import { useToast } from 'vue-toast-notification'
+
+interface Sale {
+  items_count: number
+  total_amount: number
+  unique_items: number
+  order_ref: string
+  products_total: number
+  store: number
+  shipping: number
+  has_customer: boolean
+  customer_id: number
+  fulfilled: string
+  payment_status: string
+}
+
 const authStore = useAuthStore()
 const appStore = useAppStore()
+const $toast = useToast()
 
 const cart_map = ref([])
 
 // products, cart, customer, checkout
 const activeStep = ref(0)
 
+const createOrderID = () => {
+  var ref_type = '2' // '1' purchase by customer; 2, sale added by merchant
+  var rand_int = Math.floor(Math.random() * 9999) + 1000
+  const today = new Date()
+  var year = today.getFullYear().toString().slice(-2)
+  var store_id = authStore.state.account_id.toString() // this allows for up to 9999 stores merchants
+  // var customer_id = '0000' // 0 for anonymous
+  var month = (today.getMonth() + 1).toString() // cause month is 0 indexed
+  var day = today.getDate().toString()
+  var cart_count = sale.value.cart.length.toString() // unique items (products) or absolute number of items? I go for absolute
+  // var hour = today.getHours().toString();
+
+  // hour = hour.padStart(2,"0")
+  month = month.padStart(2, '0')
+  day = day.padStart(2, '0')
+  cart_count = cart_count.padStart(2, '0')
+  store_id = store_id.padStart(4, '0')
+  // ref_type + store_id + year + month + day + cart_count // + nth purchase of the day | this.customer_id.padStart(3,"0")
+  sale.value.order_ref = ref_type + store_id + month + day + cart_count + year + rand_int
+}
 const toggleProductInCart = (id) => {
   let index = cart_map.value.indexOf(id)
-  index == -1 ? (cart_map.value = [...cart_map.value, id]) : ''
+  if (index == -1) {
+    cart_map.value = [...cart_map.value, id]
+  } else {
+    let temp = [...cart_map.value]
+    temp.splice(index, 1)
+    cart_map.value = [...temp]
+  }
 }
-
 const goToCart = () => {
   //   authStore.state.cart_map = cart_map
   activeStep.value = 1
@@ -49,35 +93,171 @@ const reduceStep = () => {
   activeStep.value -= 1
 }
 
-const unpacked_cart = ref([])
-
-watch(cart_map, () => {
+// const unpacked_cart = ref([])
+const unpacked_cart = computed(() => {
   let temp = []
-  if (cart_map.value.length > 0) {
-    let inventory = authStore.state.inventory
+  let inventory = authStore.state.inventory
 
-    cart_map.value.map((item_id) => {
-      let obj = inventory.find((item) => item.id == item_id)
-      let new_obj: { count?: number } = {}
-      Object.assign(new_obj, obj)
-
-      new_obj.count > 0 ? '' : (new_obj.count = 1) // in case cart is recovered from localStorage & has count. Ensure object not created twice
-      temp.push(new_obj)
+  cart_map.value.forEach((item) => {
+    temp.push({
+      ...inventory.find((x) => x.id === item),
+      count: 1,
+      selected_option1: '',
+      selected_option2: ''
     })
-    // this.$store.commit(mutationTypes.SAVE_UNPACKED_CART, unpacked_cart)
-    unpacked_cart.value = temp
-  }
+  })
+
+  return temp
 })
+watch(unpacked_cart, (x) => {
+  sale.value.cart = x
+})
+// watch(cart_map, () => {
+//   let temp = unpacked_cart.value
+//   // if (cart_map.value.length > 0) {
+//   let inventory = [...authStore.state.inventory]
+
+//   cart_map.value.forEach((item) => {
+//     let existAlready = unpacked_cart.value.find((x) => x.id === item)
+
+//     if (existAlready) {
+//       //remove it
+//       let t = unpacked_cart.value
+//       t.splice(item, 1)
+//       unpacked_cart.value = [...temp]
+//     } else {
+//       let new_obj: { count?: number } = {}
+//       let obj = inventory.find((x) => x.id === item)
+
+//       Object.assign(new_obj, obj)
+
+//       new_obj.count > 0 ? '' : (new_obj.count = 1) // in case cart is recovered from localStorage & has count. Ensure object not created twice
+//       temp.push(new_obj)
+
+//     }
+//   })
+//       unpacked_cart.value = [...temp]
+
+//   console.log('cartMap change ', temp)
+
+// })
 
 const increase = (idx) => {
-  unpacked_cart.value[idx].count++
+  sale.value.cart[idx].count++
 }
 
 const decrease = (idx) => {
-  unpacked_cart.value[idx].count--
+  if (sale.value.cart[idx].count > 1) {
+    sale.value.cart[idx].count--
+  }
 }
 
-const customer_id = ref()
+const sale = ref<Sale>({
+  items_count: 0,
+  total_amount: 0,
+  unique_items: 0,
+  order_ref: '',
+  products_total: 0,
+  store: 0,
+  shipping: 0,
+  has_customer: false,
+  customer_id: 0,
+  fulfilled: '',
+  payment_status: ''
+})
+
+// const selectedCustomer = ref(0)
+const selectFunction = (id) => {
+  switch (sale.value.customer_id) {
+    case 0:
+      sale.value.customer_id = id
+      sale.value.has_customer = true
+      break
+    case id:
+      sale.value.customer_id = 0
+      break
+    default:
+      sale.value.customer_id = id
+      sale.value.has_customer = true
+  }
+}
+
+const fulfillmentStatus = (e) => {
+  sale.value.fulfilled = e.target.value
+}
+const paymentStatus = (e) => {
+  sale.value.payment_status = e.target.value
+}
+const updateShipping = (e) => {
+  console.log(e.target.value)
+  sale.value.shipping = e.target.value
+}
+
+const orderItems = computed(() => {
+  return sale.value.cart.map((item, i) => {
+    var order_item = {}
+    order_item.price_sold = item.price
+    order_item.sub_total = Number(item.price * item.count)
+    order_item.index = i + 1
+    order_item.order = sale.value.order_ref
+    order_item.product = item.id
+    order_item.selected_option1 = item.selected_option1
+    order_item.selected_option2 = item.selected_option2
+    order_item.qty = item.count
+    order_item.productid = item.id
+    order_item.image_url = item.product_image
+    order_item.has_feedback = item.has_feedback
+    return order_item
+  })
+})
+
+const handleSave = () => {
+  createOrderID()
+
+  console.log(sale.value, orderItems)
+
+  sale.value.store = 0
+  sale.value.unique_items = sale.value.cart.length
+  sale.value.total_amount = sale.value.cart.reduce(
+    (accumulator, currentValue) => accumulator + currentValue.price,
+    0
+  )
+
+  const { cart, ...newObject } = sale.value
+  saveOrder(newObject)
+    .then((res) => {
+      console.log(res.data.order)
+      authStore.state.order = res.data.order
+      saveOrderItems(orderItems)
+    })
+    .catch((err) => {
+      $toast.error('something went wrong')
+    })
+    .finally(() => {
+      $toast.success('Sale Created successfully')
+      appStore.drawerIsOpen = false
+      setTimeout(() => {
+        appStore.showAddSaleView = false
+      }, 300)
+    })
+}
+
+const reset = () => {
+  sale.value = {
+    items_count: 0,
+    total_amount: 0,
+    unique_items: 0,
+    order_ref: '',
+    products_total: 0,
+    store: 0,
+    shipping: 0,
+    has_customer: false,
+    customer_id: 0,
+    fulfilled: '',
+    payment_status: ''
+  }
+  cart_map.value = []
+}
 </script>
 
 <template>
@@ -87,39 +267,40 @@ const customer_id = ref()
     :reduceStep="reduceStep"
     stateKey="showNestedAddCustomerView"
     :showAddCustomerButton="activeStep == 2"
+    @close="reset"
   >
     <!-- {{authStore.state.inventory[4]}} -->
 
     <div v-show="activeStep == 0" class="px-4 h-full relative">
       <p class="text-center my-3">select products for this sale</p>
+      <!-- {{ unpacked_cart }} -->
       <div class="form products">
-        <div
-          class="form-group product"
-          v-for="(product, i) in authStore.state.inventory"
-          :key="i"
-          @click="toggleProductInCart(product.id)"
-        >
-          <input type="checkbox" :id="'product' + i" />
-          <label :for="'product' + i">
-            <div class="sale-inventory-card">
-              <div class="img-wrapper">
-                <!-- <img :src="baseUrl + product.product_image" alt="product image" /> -->
-                <!-- <img src="../assets/images/inventory-product-image-1.png" alt=""> -->
+        <div class="form-group product" v-for="(product, i) in authStore.state.inventory" :key="i">
+          <div>
+            <input type="checkbox" :id="'product' + i" />
+            <label :for="'product' + i">
+              <div class="sale-inventory-card" @click="toggleProductInCart(product.id)">
+                <div class="img-wrapper">
+                  <!-- <img :src="baseUrl + product.product_image" alt="product image" /> -->
+                  <!-- <img src="../assets/images/inventory-product-image-1.png" alt=""> -->
+                </div>
+                <p class="product-name truncate">{{ product.product_name }}</p>
               </div>
-              <p class="product-name truncate">{{ product.product_name }}</p>
-            </div>
-          </label>
+            </label>
+          </div>
         </div>
       </div>
 
       <div class="absolute bottom-36 left-0 w-full px-4">
-        <Button class="w-full" @click="goToCart">View Cart</Button>
+        <Button class="w-full" @click="goToCart" :disabled="!unpacked_cart.length"
+          >View Cart</Button
+        >
       </div>
     </div>
-    <div v-show="activeStep == 1" class="px-4 h-full relative overflow-y-scroll">
+    <div v-show="activeStep == 1" class="px-4 h-screen relative overflow-y-scroll">
       <p class="text-center my-3">select quantity and specifications</p>
-
-      <div class="cart_item" v-for="(item, i) in unpacked_cart" :key="i">
+      <!-- <div class="h-4/6 overflow-y-scroll"> -->
+      <div class="cart_item" v-for="(item, i) in sale.cart" :key="i">
         <div class="img_wrapper">
           <!-- <img src="../assets/images/inventory-product-image-1.png" alt=""> -->
           <!-- <img :src="'http://127.0.0.1:8000' + item.product_image" alt="product image" /> -->
@@ -139,7 +320,7 @@ const customer_id = ref()
           </div>
           <div>
             <div class="flex justify-between my-3" v-if="item.first_variant && item.second_variant">
-              <Select>
+              <Select v-model="item.selected_option1">
                 <SelectTrigger class="w-[100px]">
                   <SelectValue :placeholder="`${item.first_variant_name}`" />
                 </SelectTrigger>
@@ -156,7 +337,7 @@ const customer_id = ref()
                 </SelectContent>
               </Select>
 
-              <Select>
+              <Select v-model="item.selected_option2">
                 <SelectTrigger class="w-[100px]">
                   <SelectValue :placeholder="`${item.second_variant_name}`" />
                 </SelectTrigger>
@@ -180,8 +361,8 @@ const customer_id = ref()
               <div class="counter-button" @click="decrease(i)">
                 <MinusIcon class="w-4 h-4" />
               </div>
-              <div class="number">
-                <p>{{ item.count }}</p>
+              <div class="0">
+                <p>{{ sale.cart.find((cartItem) => cartItem.id == item.id).count }}</p>
               </div>
               <div class="counter-button" @click="increase(i)">
                 <PlusIcon class="w-4 h-4" />
@@ -190,6 +371,7 @@ const customer_id = ref()
           </div>
         </div>
       </div>
+      <!-- </div> -->
 
       <div class="absolute bottom-36 left-0 w-full px-4">
         <Button class="w-full" @click="goToCustomer">Select or add Buyer</Button>
@@ -205,9 +387,9 @@ const customer_id = ref()
           class="select-customer-wrapper"
           v-for="(customer, i) in authStore.state.customers"
           :key="i"
-          @click="selectFunction(customer.id, customer)"
+          @click="selectFunction(customer.id)"
         >
-          <div class="list_style_1 my-4" :class="{ active: customer_id == customer.id }">
+          <div class="list_style_1 my-4" :class="{ active: sale.customer_id == customer.id }">
             <div style="display: flex">
               <div class="customer_img">
                 <img src="@/assets/images/icons/select-customer-author-icon.svg" alt="" />
@@ -233,10 +415,15 @@ const customer_id = ref()
     <div v-show="activeStep == 3">
       <p class="text-center my-3">Checkout</p>
 
-      <CheckoutForm />
-       <div class="absolute bottom-36 left-0 w-full px-4">
-          <Button class="w-full" @click="goToCheckout">Save </Button>
-        </div>
+      <CheckoutForm
+        :sale="sale"
+        @paymentStatus="paymentStatus"
+        @fulfillmentStatus="fulfillmentStatus"
+        @updateShipping="updateShipping"
+      />
+      <div class="absolute bottom-36 left-0 w-full px-4">
+        <Button class="w-full" @click="handleSave">Save </Button>
+      </div>
     </div>
     <div></div>
   </DrawerView>
@@ -448,6 +635,4 @@ h3 {
 .active {
   border: 1px solid #4caf50;
 }
-
-
 </style>

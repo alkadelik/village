@@ -325,6 +325,7 @@ const createNewProduct = (new_product) => {
   createProduct(new_product)
     .then((res) => {
       $toast.success('product added successfully')
+      authStore.state.inventory.push(res.data)
       // this.new_product.id = res.data.id
       // this.new_product.temp_id = res.data.id; // when creating multiple products at a time
     })

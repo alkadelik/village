@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import { Input } from '@/components/ui/input'
+
+const props = defineProps(['sale'])
+
+
 </script>
 
 <template>
   <div class="form nav-margin-top py-6 px-4">
     <div class="form-group">
       <label for="your-email">Enter deliver fee if any</label>
-      <Input  class="my-2" />
+      {{sale.shipping}}
+      <Input :modelValue="sale.shipping" :handleChange="e => $emit('updateShipping', e)" class="my-2" />
     </div>
 
-    <div v-if="vegan" id="sales-added-modal" centered title="BootstrapVue">
+    <!-- <div v-if="vegan" id="sales-added-modal" centered title="BootstrapVue">
       <div class="sales-added-body-wrapper">
         <div class="product-body">
           <img src="@/assets/images/icons/sales-added-check-icon.svg" alt="" />
@@ -20,7 +25,7 @@ import { Input } from '@/components/ui/input'
           </p>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="payment-status">
       <p class="dark label my-2">Has this order been pad for?</p>
@@ -30,7 +35,7 @@ import { Input } from '@/components/ui/input'
           name="payment-status"
           type="radio"
           value="1"
-          @change="paymentStatus($event)"
+          @change="$emit('paymentStatus', $event)"
         />
         <label for="paid" class="radio-label">Yes</label>
       </div>
@@ -40,7 +45,7 @@ import { Input } from '@/components/ui/input'
           name="payment-status"
           type="radio"
           value="0"
-          @change="paymentStatus($event)"
+          @change="$emit('paymentStatus', $event)"
         />
         <label for="not-paid" class="radio-label">No</label>
       </div>
@@ -53,7 +58,7 @@ import { Input } from '@/components/ui/input'
           name="delivery-status"
           type="radio"
           value="1"
-          @change="fulfillmentStatus($event)"
+          @change="$emit('fulfillmentStatus', $event)"
         />
         <label for="delivered" class="radio-label">Fulfilled</label>
         <span>A receipt and feedback request will be emailed to the customer</span>
@@ -64,7 +69,7 @@ import { Input } from '@/components/ui/input'
           name="delivery-status"
           type="radio"
           value="0"
-          @change="fulfillmentStatus($event)"
+          @change="$emit('fulfillmentStatus', $event)"
         />
         <label for="not-delivered" class="radio-label">Not fulfilled</label>
         <span>Only a receipt will be emailed to the customer</span>

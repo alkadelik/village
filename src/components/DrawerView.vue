@@ -5,7 +5,7 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
 import { useAppStore } from '../stores/app'
 
 const appStore = useAppStore()
-
+ const emit = defineEmits(['close'])
 const props = defineProps(['step', 'reduceStep', 'stateKey', 'showAddCustomerButton'])
 
 const closeDrawer = () => {
@@ -16,6 +16,7 @@ const closeDrawer = () => {
       appStore.drawerIsOpen = false
 
       if (props.stateKey) {
+        emit('close')
         setTimeout(() => {
           appStore[props.stateKey] = false
         }, 300)

@@ -20,27 +20,43 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
+import { saveCustomer } from '@/services/apiServices'
+import { useToast } from 'vue-toast-notification'
+import { useAppStore } from '../stores/app'
+
+const authStore = useAuthStore()
+const appStore = useAppStore()
+const $toast = useToast()
 
 const formSchema = toTypedSchema(
   z.object({
-    firstname: z.string(),
-    lastname: z.string(),
+    first_name: z.string(),
+    last_name: z.string(),
     address: z.string(),
+    city: z.string(),
     phone: z.number(),
     email: z.string().email('Please enter a valid email address').min(5),
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .max(50, 'Password can be at most 50 characters')
   })
 )
 
 const form = useForm({
   validationSchema: formSchema
 })
-
 const onSubmit = form.handleSubmit((values) => {
   console.log('Form submitted!', values)
+
+  		saveCustomer({...values, line1: ''})
+			.then((res) => {
+				// this.new_customer_id = res.data.customer.id
+				authStore.state.customers.push(res.data.customer)
+        $toast.success("Customer createed successfully")
+    appStore.showAddCustomerView = false
+
+			})
+      .catch(() =>{
+        $toast.error("Something went wrong")
+
+      })
   //   authStore.login(values)
 })
 </script>
@@ -52,7 +68,7 @@ const onSubmit = form.handleSubmit((values) => {
 
       <form @submit="onSubmit" class="mt-10">
         <div class="flex gap-2">
-          <FormField v-slot="{ componentField }" name="firstname">
+          <FormField v-slot="{ componentField }" name="first_name">
             <FormItem>
               <FormLabel
                 ><span class="text-secondary text-base font-light">First Name</span></FormLabel
@@ -71,7 +87,7 @@ const onSubmit = form.handleSubmit((values) => {
               <FormMessage />
             </FormItem>
           </FormField>
-          <FormField v-slot="{ componentField }" name="lastname">
+          <FormField v-slot="{ componentField }" name="last_name">
             <FormItem>
               <FormLabel
                 ><span class="text-secondary text-base font-light">Last Name</span></FormLabel
@@ -108,6 +124,24 @@ const onSubmit = form.handleSubmit((values) => {
         <FormField v-slot="{ componentField }" name="address">
           <FormItem>
             <FormLabel><span class="text-secondary text-base font-light">address</span></FormLabel>
+            <FormControl>
+              <Input
+                id="address"
+                type="text"
+            
+                class="mt-3 mb-4"
+                v-bind="componentField"
+              >
+                <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
+              /> -->
+              </Input>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+          <FormField v-slot="{ componentField }" name="city">
+          <FormItem>
+            <FormLabel><span class="text-secondary text-base font-light">city</span></FormLabel>
             <FormControl>
               <Input
                 id="address"
