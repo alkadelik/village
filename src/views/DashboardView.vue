@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue'
 import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import * as dayjs from 'dayjs'
+import  dayjs from 'dayjs/esm'
 import { fetchOrders, fetchMetrics } from '@/services/apiServices'
 
 const authStore = useAuthStore()
