@@ -138,7 +138,7 @@ watch(unpacked_cart, (x) => {
 //   })
 //       unpacked_cart.value = [...temp]
 
-//   console.log('cartMap change ', temp)
+//   //console.log('cartMap change ', temp)
 
 // })
 
@@ -189,7 +189,7 @@ const paymentStatus = (e) => {
   sale.value.payment_status = e.target.value
 }
 const updateShipping = (e) => {
-  console.log(e.target.value)
+  //console.log(e.target.value)
   sale.value.shipping = e.target.value
 }
 
@@ -214,7 +214,7 @@ const orderItems = computed(() => {
 const handleSave = () => {
   createOrderID()
 
-  console.log(sale.value, orderItems)
+  //console.log(sale.value, orderItems)
 
   sale.value.store = 0
   sale.value.unique_items = sale.value.cart.length
@@ -226,7 +226,7 @@ const handleSave = () => {
   const { cart, ...newObject } = sale.value
   saveOrder(newObject)
     .then((res) => {
-      console.log(res.data.order)
+      //console.log(res.data.order)
       authStore.state.order = res.data.order
       saveOrderItems(orderItems)
     })

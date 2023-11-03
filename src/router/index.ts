@@ -48,6 +48,10 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
   const authStore = useAuthStore()
+  setTimeout(() => {
+  //console.log(authStore.state.state)
+    
+  }, 5000);
 if(!authStore.state) return
   if (
     // make sure the user is authenticated

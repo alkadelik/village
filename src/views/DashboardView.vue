@@ -11,7 +11,7 @@ const updateMetrics = () => {
   fetchMetrics(period.value).then((res) => {
     authStore.state.metrics = res.data
     metrics.value = res.data
-    console.log(res.data)
+    //console.log(res.data)
   })
 }
 

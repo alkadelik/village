@@ -48,7 +48,7 @@ const showAddProductView = () => {
           <span>{{ product.description }}</span>
         </div>
       </div>
-      <a>Product Review</a>
+      <!-- <a>Product Review</a> -->
     </div>
     </div>
 

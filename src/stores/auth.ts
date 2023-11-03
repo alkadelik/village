@@ -5,32 +5,19 @@ import { defineStore } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { apiLogin } from '@/services/apiServices'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useToast } from 'vue-toast-notification'
 
 export const useAuthStore = defineStore('auth', () => {
   const $toast = useToast()
   const router = useRouter()
   const localStorageState = JSON.parse(localStorage.getItem('leyyow') || '{}')
-  console.log(localStorageState)
-  const state = computed(() => ({
-    isAuthenticated: Boolean(localStorage.getItem('isAuthenticated')),
-    loggedIn:
-      localStorage.getItem('leyyow_token') == null
-        ? false
-        : Boolean(localStorage.getItem('leyyow_token')),
-    store: {},
-    store_slug: '',
-    account_id: '',
-    customers: [],
-    has_customer: false,
-    inventory: [],
-    productTemplates: [], 
-    has_product: false,
-    email_verified: false,
-    loading: false,
-    ...localStorageState
-  }))
+  //console.log(localStorageState)
+
+ 
+  const state = ref(localStorageState)
+
+//console.log(state.value)
 
   function login(values: { username?: string; password?: string }) {
     apiLogin(values)

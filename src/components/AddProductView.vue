@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 
+
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import {
   Table,
@@ -57,6 +58,7 @@ interface Product {
   review_count?: number
   rate_tracking?: string
   template_id?: number
+  from_template?: boolean;
 }
 
 const authStore = useAuthStore()
@@ -64,7 +66,7 @@ const $toast = useToast()
 
 onMounted(() => {
   fethcStoreTemplates(authStore.state.account_id).then((res) => {
-    console.log(res.data)
+    //console.log(res.data)
 
     authStore.state.productTemplates = res.data
     productTemplates.value = res.data
@@ -72,7 +74,7 @@ onMounted(() => {
   })
 
   //  fethcStoreInventory(authStore.state.account_id).then(res => {
-  //   console.log(res)
+  //   //console.log(res)
   //  })
 })
 
@@ -142,7 +144,7 @@ function generateCombinations(arrays, index, currentCombination, result) {
     if (!arrays.length) {
       return
     }
-    console.log(arrays, 'k')
+    //console.log(arrays, 'k')
 
     result.push(arrays)
     return
@@ -190,14 +192,14 @@ const uniqueVariants = computed(() => {
         specs.push(Object.values(values))
       }
       const result = []
-      console.log(specs)
+      //console.log(specs)
       if (specs.length > 0 && Array.isArray(specs[0])) {
         specs = specs?.filter((item) => item.length > 0)
       }
       generateCombinations(specs, 0, [], result)
       arr[product] = result
     }
-    console.log(arr)
+    //console.log(arr)
     return arr
   }
   return {}
@@ -205,10 +207,10 @@ const uniqueVariants = computed(() => {
 
 watch(selectedProducts.value, (newSelectedProducts, oldSelectedProducts) => {
   // Loop through the removed items and delete corresponding properties
-  console.log('watch', oldSelectedProducts, newSelectedProducts)
+  //console.log('watch', oldSelectedProducts, newSelectedProducts)
   for (const product of Object.keys(selectedProductSpecs.value)) {
     if (!newSelectedProducts.includes(product)) {
-      console.log('delete')
+      //console.log('delete')
       delete selectedProductSpecs.value[product]
     }
   }
@@ -258,7 +260,7 @@ function addItemToArrayWithCheck(array, item) {
 }
 
 const handleSelectSpec = (e, product, spec, value) => {
-  console.log(e.target.checked, product, spec, value, [value])
+  //console.log(e.target.checked, product, spec, value, [value])
   // if(selectedProductSpecs.value[product].specs[spec] == undefined){
   //   selectedProductSpecs.value = {}
   // }
@@ -273,17 +275,17 @@ const handleSelectSpec = (e, product, spec, value) => {
 
   addItemToArrayWithCheck(selectedProductSpecs.value[product][spec], value)
 
-  console.log(selectedProductSpecs.value)
+  //console.log(selectedProductSpecs.value)
 }
 
 const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.length > 0)
 
 const handleChange = (e, variantName, property) => {
-  // console.log(e.target.value, variantName)
+  // //console.log(e.target.value, variantName)
 
   variants.value[variantName] = { ...variants.value[variantName], [property]: e.target.value }
 
-  console.log(variants.value)
+  //console.log(variants.value)
 }
 
 const stringifiedVariants = computed(() => {
@@ -310,11 +312,12 @@ const handleSubmit = () => {
   inventoryItem.store = authStore.state.store.store_name
   inventoryItem.variant_options = stringifiedVariants.value
   inventoryItem.template_id = selectedProductObject.value.id
+  inventoryItem.from_template = true
   // inventoryItem.product_image = "/media/static/images/default_product.png"
   // inventoryItem.category = "gadgets"
   // compute variants
 
-  console.log(inventoryItem, stringifiedVariants)
+  //console.log(inventoryItem, stringifiedVariants)
   createNewProduct(inventoryItem)
 
   // inventoryItem.product_image =
