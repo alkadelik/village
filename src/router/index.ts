@@ -42,7 +42,12 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
-    }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'ErrorView',
+      component: () => import('../components/ErrorView.vue'),
+  }
   ]
 })
 
@@ -55,9 +60,9 @@ router.beforeEach(async (to, from) => {
 if(!authStore.state) return
   if (
     // make sure the user is authenticated
-    !authStore.state.loggedIn &&
+(    !authStore.state.loggedIn &&
     // ❗️ Avoid an infinite redirect
-   to.name !== 'login'
+   to.name !== 'login') || to.name == 'home'
   ) {
     // redirect the user to the login page
     return { name: 'login' }
