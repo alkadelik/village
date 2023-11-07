@@ -35,15 +35,15 @@ const customers = ref(authStore.state.customers)
 <template>
   <AppLayout 
    class="relative p-4"  pageTitle="Sales" stateKey="showAddSaleView"  navBtnText="add Sale" :hasNavBtn="true">
-    <div v-if="!authStore.state.orders?.length" class="h-screen flex justify-center items-center">
+    <div v-if="!authStore.state.orders?.length" class="flex justify-center items-center">
       <div class="text-center w-8/12">
         <img
           src="../assets/images/product-skeleton.png"
           class="w-32 mx-auto"
           alt="product skeleton icon"
         />
-        <h3 class="text-xl font-bold">No Products Added</h3>
-        <p class="font-light my-3">Add products to your store so you can take orders easily.</p>
+        <h3 class="text-xl font-bold">No Sales Added</h3>
+        <p class="font-light my-3">Add sales to your store so you can take orders easily.</p>
         <Button class="my-4 w-10/12" size="lg" @click="showAddProductView">Add Sale</Button>
       </div>
     </div>

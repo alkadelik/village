@@ -20,8 +20,8 @@ const openDrawer = (key) => {
 </script>
 
 <template>
-  <div class=" h-screen relative p-4 overflow-hidden">
-    <div class="flex justify-between ">
+  <div class=" h-screen relative p-4 overflow-y-hidden">
+    <div class="fixed top-0 left-0 w-full p-4 flex justify-between ">
       <h2 class="font-bold text-xl text-secondary">{{ pageTitle }}</h2>
       <div class="w-6/12 gap-3 justify-end flex">
         <Button v-if="hasNavBtn" size="sm" @click="openDrawer(stateKey, stateKey2)"><PlusIcon class="w-4 h-4" /></Button>
@@ -29,12 +29,12 @@ const openDrawer = (key) => {
       </div>
     </div>
 
-<div class="mt-6 h-5/6 overflow-y-scroll">
+<div class="mt-6 h-5/6 overflow-y-scroll flex justify-center items-center">
     <slot></slot>
 
 </div>
 
-    <div class="fixed left-0 bottom-0 shadow-2xl h-20 w-full">
+    <div class="fixed left-0 bottom-0 shadow-2xl h-20 w-full bg-white">
       <ul class="flex justify-between px-6 py-4 text-gray-400">
         <li>
           <router-link to="/dashboard">
