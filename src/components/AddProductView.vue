@@ -59,6 +59,7 @@ interface Product {
   rate_tracking?: string
   template_id?: number
   from_template?: boolean;
+  condition?: string;
 }
 
 const authStore = useAuthStore()
@@ -109,6 +110,15 @@ onMounted(() => {
 //   }
 // ]
 
+const conditions = ref({
+"New": "NW",
+"Open box": "OB",
+"Excellent": "EX",
+"Good": "GD",
+"Used": "US",
+"For parts": "FP",
+})
+const selectedCondition = ref()
 const productTemplates = ref([])
 const productsObject = computed(() => {
   let obj = {}
@@ -277,6 +287,25 @@ const handleSelectSpec = (e, product, spec, value) => {
 
   //console.log(selectedProductSpecs.value)
 }
+const handleSelectCondition = (e, product, spec, value) => {
+  // console.log(e.target.checked, product, spec, value, [value])
+  selectedCondition.value = value
+  // if(selectedProductSpecs.value[product].specs[spec] == undefined){
+  //   selectedProductSpecs.value = {}
+  // }
+  // if (!selectedProductSpecs.value[product]) {
+  //   selectedProductSpecs.value[product] = {
+  //     [spec]: []
+  //   }
+  // }
+  // if (!selectedProductSpecs.value[product][spec]) {
+  //   selectedProductSpecs.value[product][spec] = []
+  // }
+
+  // addItemToArrayWithCheck(selectedProductSpecs.value[product][spec], value)
+
+  //console.log(selectedProductSpecs.value)
+}
 
 const anyVariantsSelected = Object.values(uniqueVariants).some((item) => item?.length > 0)
 
@@ -313,6 +342,7 @@ const handleSubmit = () => {
   inventoryItem.variant_options = stringifiedVariants.value
   inventoryItem.template_id = selectedProductObject.value.id
   inventoryItem.from_template = true
+  inventoryItem.condition = selectedCondition.value
   // inventoryItem.product_image = "/media/static/images/default_product.png"
   // inventoryItem.category = "gadgets"
   // compute variants
@@ -381,7 +411,7 @@ const createNewProduct = (new_product) => {
           <Button variant="outline" class="text-secondary">next</Button>
         </div> -->
       </div>
-            
+
       <div>
         <h2 class="font-bold text-lg my-6">Select specifications</h2>
         <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
@@ -408,6 +438,36 @@ const createNewProduct = (new_product) => {
                   @change="(e) => handleSelectSpec(e, selectedProductName, spec, value)"
                 />
                 <label :for="`${selectedProductName}-${value}-${idx}`">
+                  <span class="ml-2">{{ value }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="font-bold text-lg my-6">Select condition</h2>
+        <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
+
+        <div class="my-4" v-else>
+          <h2 class="font-bold my-2">{{ selectedProductName }}</h2>
+          <div class=" justify-between">
+            <h4 class="font-medium">Condition</h4>
+            <div class=" flex-row gap-2">
+              <div
+                class="no-wrap flex"
+                v-for="(value, idx) in Object.keys(conditions)"
+                :key="idx"
+              >
+                <input
+                  type="radio"
+                  :id="value"
+                  name="condition"
+                  :value="conditions[value]"
+                  @change="(e) => handleSelectCondition(e, selectedProductName, spec, conditions[value])"
+                />
+                <label :for="value">
                   <span class="ml-2">{{ value }}</span>
                 </label>
               </div>

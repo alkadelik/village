@@ -46,7 +46,7 @@ export const fethcStoreInventory = (slug) => {
 export const fethcStoreTemplates = (slug) => {
 	return axios({
 		method: "get",
-		url: `${urls.inventoryTemplatesUrl}/`,
+		url: `${urls.inventoryTemplatesUrl}`,
 	})
 }
 export const fetchMetrics = (period) => {

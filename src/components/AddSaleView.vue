@@ -273,6 +273,7 @@ const reset = () => {
 
     <div v-show="activeStep == 0" class="px-4 h-full relative">
       <p class="text-center my-3">select products for this sale</p>
+      <p v-if="!authStore.state.inventory.length" class="text-center my-3">You have no products to sell from please create one </p>
       <!-- {{ unpacked_cart }} -->
       <div class="form products">
         <div class="form-group product" v-for="(product, i) in authStore.state.inventory" :key="i">
