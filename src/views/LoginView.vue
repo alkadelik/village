@@ -51,8 +51,8 @@ const onSubmit = form.handleSubmit((values) => {
         <div class="flex justify-center">
           <img src="@/assets/images/store-icon.png" class="w-60" alt="" />
         </div>
-        <h2 class="font-bold text-lg mb-4">Seamless online store</h2>
-        <p class="text-slate-100">Generate business model with no hustle and headache</p>
+        <h2 class="font-bold text-lg mb-4">Welcome back</h2>
+        <p class="text-slate-100">Enter your email and password to log in.</p>
       </div>
       <v-carousel show-arrows hide-delimiter-background>
         <template v-slot:prev="{ props }">

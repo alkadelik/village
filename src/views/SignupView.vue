@@ -132,13 +132,13 @@ const createAccount = () => {
         <p class="text-slate-100">Generate business model with no hustle and headache</p>
       </div>
     </div>
-    <div class="w-full md:w-6/12 flex justify-center h-full bg-slate-100">
+    <div class="w-full md:w-6/12 flex justify-center h-full bg-slate-100 overflow-y-scroll">
       <div class="md:w-8/12 w-full">
         <div class="mx-auto md:mx-0 px-4 md:shadow-none shadow-lg">
           <div class="image-container -mx-4 md:hidden"></div>
           <h2 class="font-bold text-primary text-lg my-6">Leyyow</h2>
-          <h1 class="font-bold text-3xl mt-12 md:mt-0 md:mb-4">Welcome back</h1>
-          <p class="text-secondary text-sm">Enter your email and password to log in.</p>
+          <h1 class="font-bold text-3xl mt-12 md:mt-0 md:mb-4">Seamless online store</h1>
+          <p class="text-secondary text-sm">Generate business model with no hustle and headache</p>
           <div class="bg-white py-6 px-6 md:px-8 rounded-t-2xl mt-12 md:h-full pb-44">
             <form @submit="onSubmit" class="md:mt-0 mt-10">
               <div class="flex items-center justify-center mb-8">
