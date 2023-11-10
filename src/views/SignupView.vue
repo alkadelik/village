@@ -74,8 +74,7 @@ const form = useForm({
 const onSubmit = form.handleSubmit((values) => {
   console.log('Form submitted!', values)
 
-  
-  authStore.register({...values, store_slug: store_slug.value})
+  authStore.register({ ...values, store_slug: store_slug.value })
 })
 
 const store_types = ref([
@@ -122,7 +121,7 @@ const createAccount = () => {
 </script>
 
 <template>
-  <div class="flex h-screen ">
+  <div class="flex h-screen">
     <div class="w-6/12 hidden left md:flex justify-center items-center">
       <div class="text-white text-center w-5/12">
         <div class="flex justify-center">
@@ -137,8 +136,10 @@ const createAccount = () => {
         <div class="mx-auto md:mx-0 px-4 md:shadow-none shadow-lg">
           <div class="image-container -mx-4 md:hidden"></div>
           <h2 class="font-bold text-primary text-lg my-6">Leyyow</h2>
-          <h1 class="font-bold text-3xl mt-12 md:mt-0 md:mb-4">Seamless online store</h1>
-          <p class="text-secondary text-sm">Generate business model with no hustle and headache</p>
+          <h1 class="font-bold text-3xl mt-12 md:mt-0 md:mb-4">Create your store</h1>
+          <p class="text-secondary text-sm">
+            Enter your store name and link, and select your store type.
+          </p>
           <div class="bg-white py-6 px-6 md:px-8 rounded-t-2xl mt-12 md:h-full pb-44">
             <form @submit="onSubmit" class="md:mt-0 mt-10">
               <div class="flex items-center justify-center mb-8">
