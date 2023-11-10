@@ -70,7 +70,7 @@ const onSubmit = form.handleSubmit((values) => {
         </v-carousel-item>
       </v-carousel>
     </div>
-    <div class="w-full md:w-6/12 flex justify-center h-full overflow-y-hidden bg-slate-100">
+    <div class="w-full md:w-6/12 flex justify-center h-full bg-slate-100">
       <div class="md:w-8/12">
         <div class="mx-auto px-4 md:shadow-none h-screen">
           <div class="image-container -mx-4 md:hidden"></div>

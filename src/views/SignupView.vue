@@ -132,7 +132,7 @@ const createAccount = () => {
         <p class="text-slate-100">Generate business model with no hustle and headache</p>
       </div>
     </div>
-    <div class="w-full md:w-6/12 flex justify-center h-full bg-slate-100 overflow-y-scroll">
+    <div class="w-full md:w-6/12 flex justify-center h-full bg-slate-100">
       <div class="md:w-8/12 w-full">
         <div class="mx-auto md:mx-0 px-4 md:shadow-none shadow-lg">
           <div class="image-container -mx-4 md:hidden"></div>
