@@ -88,40 +88,11 @@ const store_types = ref([
   { name: 'Other', type: '5' }
 ])
 
-const createAccount = () => {
-  // e.preventDefault()
 
-  if (this.step1 && this.step2 == true) {
-    let data = {
-      email: this.email.trim().toLowerCase(),
-      password: this.password
-    }
-    signUp(data)
-      .then((res) => {
-        window.sessionStorage.setItem('leyyow_token', res.data.token)
-        axios.defaults.headers.common['Authorization'] = `Token ${res.data.token}`
-
-        let data = {
-          store_name: this.store_name,
-          slug: this.store_slug,
-          business_type: this.store_type
-        }
-        createStore(data)
-      })
-      .catch(() => {
-        EventBus.$emit('open_alert', 'error', 'Signup error')
-      })
-      .finally(() => {
-        this.loading = false
-        this.$router.push('/dash')
-        EventBus.$emit('open_alert', 'success', 'Sign up successful')
-      })
-  }
-}
 </script>
 
 <template>
-  <div class="flex h-screen">
+  <div class="flex">
     <div class="w-6/12 hidden left md:flex justify-center items-center">
       <div class="text-white text-center w-5/12">
         <div class="flex justify-center">
@@ -131,16 +102,16 @@ const createAccount = () => {
         <p class="text-slate-100">Generate business model with no hustle and headache</p>
       </div>
     </div>
-    <div class="w-full md:w-6/12 flex justify-center h-full bg-slate-100">
-      <div class="md:w-8/12 w-full">
-        <div class="mx-auto md:mx-0 px-4 md:shadow-none shadow-lg">
+    <div class="w-full md:w-6/12 flex justify-center h-full pb-32 md:pb-0 bg-slate-100 md:overflow-y-hidden">
+      <div class="md:w-10/12 xl:w-8/12 w-full">
+        <div class="mx-auto md:mx-0 px-4 md:shadow-none ">
           <div class="image-container -mx-4 md:hidden"></div>
           <h2 class="font-bold text-primary text-lg my-6">Leyyow</h2>
           <h1 class="font-bold text-3xl mt-12 md:mt-0 md:mb-4">Create your store</h1>
           <p class="text-secondary text-sm">
             Enter your store name and link, and select your store type.
           </p>
-          <div class="bg-white py-6 px-6 md:px-8 rounded-t-2xl mt-12 md:h-full pb-44">
+          <div class="bg-white py-6 px-6 md:px-8 rounded-t-2xl mt-12 md:h-full ">
             <form @submit="onSubmit" class="md:mt-0 mt-10">
               <div class="flex items-center justify-center mb-8">
                 <span

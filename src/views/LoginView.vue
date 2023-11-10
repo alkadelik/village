@@ -46,7 +46,7 @@ const onSubmit = form.handleSubmit((values) => {
 
 <template>
   <div class="flex">
-    <div class="w-6/12 hidden left md:flex justify-center items-center">
+    <div class="md:w-6/12 w-full hidden left md:flex justify-center items-center">
       <div class="text-white text-center w-5/12">
         <div class="flex justify-center">
           <img src="@/assets/images/store-icon.png" class="w-60" alt="" />
@@ -70,8 +70,8 @@ const onSubmit = form.handleSubmit((values) => {
         </v-carousel-item>
       </v-carousel>
     </div>
-    <div class="w-full md:w-6/12 flex justify-center h-full bg-slate-100 md:overflow-y-hidden">
-      <div class="md:w-8/12">
+    <div class="w-full md:w-6/12 flex justify-center pb-32 md:pb-0 h-full bg-slate-100 md:overflow-y-hidden">
+      <div class="md:w-10/12 xl:w-8/12 w-full">
         <div class="mx-auto px-4 md:shadow-none h-screen">
           <div class="image-container -mx-4 md:hidden"></div>
           <h2 class="font-bold text-primary text-lg my-6">Leyyow</h2>
@@ -79,7 +79,7 @@ const onSubmit = form.handleSubmit((values) => {
           <p class="text-secondary text-sm">
             Enter your email and password to log in.
           </p>
-          <div class="bg-white py-6 px-6 pb-32 md:px-8 rounded-t-2xl mt-12 md:h-full">
+          <div class="bg-white py-6 px-6  md:px-8 rounded-t-2xl mt-12 md:h-full">
             <form @submit="onSubmit" class="md:mt-0 mt-10">
               <FormField v-slot="{ componentField }" name="username">
                 <FormItem>
