@@ -11,7 +11,7 @@ export const verifyWaitlistEmailUrl = `${prefix}/account/waitlist/verify_email/`
 
 // Store particulars
 // export const createStoreUrl = `${prefix}/account/store/create/`
-export const createStoreUrl = `${prefix}user/_create_store/`
+export const createStoreUrl = `${prefix}/user/api_create_store/`
 export const updateStoreUrl = `${prefix}/account/store/update/`
 
 // Paystack
