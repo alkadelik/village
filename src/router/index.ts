@@ -16,6 +16,11 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue')
     },
     {
+      path: '/signup',
+      name: 'signup',
+      component: () => import('../views/SignupView.vue')
+    },
+    {
       path: '/inventory',
       name: 'inventory',
       component: () => import('../views/InventoryView.vue')
@@ -36,6 +41,11 @@ const router = createRouter({
       component: () => import('../views/DashboardView.vue')
     },
     {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../views/ForgotPassword.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
@@ -46,28 +56,27 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'ErrorView',
-      component: () => import('../components/ErrorView.vue'),
-  }
+      component: () => import('../components/ErrorView.vue')
+    }
   ]
 })
 
 router.beforeEach(async (to, from) => {
   const authStore = useAuthStore()
+  const authRoutes = ['login', 'signup', 'forgot-password']
   setTimeout(() => {
-  //console.log(authStore.state.state)
-    
-  }, 5000);
-if(!authStore.state) return
+    //console.log(authStore.state.state)
+  }, 5000)
+  if (!authStore.state) return
   if (
-    // make sure the user is authenticated
-(    !authStore.state.loggedIn &&
+    (!authStore.state.loggedIn && !authRoutes.includes(to.name)) ||
     // ❗️ Avoid an infinite redirect
-   to.name !== 'login') || to.name == 'home'
+    to.name == 'home'
   ) {
     // redirect the user to the login page
     return { name: 'login' }
   }
-  
+
   if (authStore.state.loggedIn && to.name == 'login') {
     return { name: 'inventory' }
   }

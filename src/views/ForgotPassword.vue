@@ -71,28 +71,24 @@ const onSubmit = form.handleSubmit((values) => {
       </v-carousel>
     </div>
     <div class="w-full md:w-6/12 flex justify-center h-full overflow-y-hidden bg-slate-100">
-      <div class="md:w-8/12">
-        <div class="mx-auto px-4 md:shadow-none h-screen">
+      <div class="w-full md:w-8/12">
+        <div class="mx-auto px-4 md:shadow-none shadow-lg h-screen">
           <div class="image-container -mx-4 md:hidden"></div>
           <h2 class="font-bold text-primary text-lg my-6">Leyyow</h2>
-          <h1 class="font-bold text-3xl mt-12 md:mt-0 md:mb-4">Create your store</h1>
-          <p class="text-secondary text-sm">
-            Enter your store name and link, and select your store type.
-          </p>
+          <h1 class="font-bold text-3xl mt-12 md:mt-0 md:mb-4">Forgot password</h1>
+          <p class="text-secondary text-sm">Enter the email associated with your account.</p>
           <div class="bg-white py-6 px-6 md:px-8 rounded-t-2xl mt-12 md:h-full">
             <form @submit="onSubmit" class="md:mt-0 mt-10">
               <FormField v-slot="{ componentField }" name="username">
                 <FormItem>
                   <FormLabel
-                    ><span class="text-secondary text-base font-light"
-                      >Email Address</span
-                    ></FormLabel
+                    ><span class="text-secondary text-base font-light">Email</span></FormLabel
                   >
                   <FormControl>
                     <Input
+                      hasPrefix
                       id="username"
                       type="email"
-                      hasPrefix
                       class="mt-3 mb-4"
                       v-bind="componentField"
                     >
@@ -102,35 +98,12 @@ const onSubmit = form.handleSubmit((values) => {
                   <FormMessage />
                 </FormItem>
               </FormField>
-              <FormField v-slot="{ componentField }" name="password">
-                <FormItem>
-                  <FormLabel
-                    ><span class="text-secondary text-base font-light">Password</span></FormLabel
-                  >
-                  <FormControl>
-                    <Input
-                      id="password"
-                      type="password"
-                      hasPrefix
-                      class="mt-3 mb-4"
-                      v-bind="componentField"
-                      ><LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
-                    /></Input>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-              <div class="flex justify-end">
-                <router-link to="/forgot-password">
-                  <Button variant="link" class="text-right text-primary">Forgot password</Button>
-                </router-link>
-              </div>
 
-              <Button type="submit" class="w-full mt-6 font-bold" size="lg"> Login </Button>
+              <Button type="submit" class="w-full mt-6 font-bold" size="lg"> Continue </Button>
               <p class="text-center my-2">
-                Don't have an account?
-                <router-link to="/signup"
-                  ><span class="text-primary hover:underline">Sign up</span>
+                Remeber password?
+                <router-link to="/login"
+                  ><span class="text-primary hover:underline">Login</span>
                 </router-link>
               </p>
             </form>
