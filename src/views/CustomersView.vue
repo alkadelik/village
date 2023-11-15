@@ -44,7 +44,7 @@ const selectFunction = (id, customer) => {
     navBtnText="add Customer"
     :hasNavBtn="true"
   >
-    <div v-if="!authStore.state.customers.length" class=" flex justify-center items-center">
+    <div v-if="!authStore.state.customers.length" class="h-full flex justify-center items-center">
       <div class="text-center w-8/12">
         <img
           src="../assets/images/product-skeleton.png"

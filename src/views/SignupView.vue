@@ -104,8 +104,8 @@ const store_types = ref([
     </div>
     <div class="w-full md:w-6/12 flex justify-center h-full pb-32 md:pb-0 bg-slate-100 md:overflow-y-hidden">
       <div class="md:w-10/12 xl:w-8/12 w-full">
-        <div class="mx-auto md:mx-0 px-4 md:shadow-none ">
-          <div class="image-container -mx-4 md:hidden"></div>
+        <div class="mx-auto md:mx-0 px-4 md:shadow-none h-screen">
+          <div class="image-container -mx-4 "></div>
           <h2 class="font-bold text-primary text-lg my-6">Leyyow</h2>
           <h1 class="font-bold text-3xl mt-12 md:mt-0 md:mb-4">Create your store</h1>
           <p class="text-secondary text-sm">

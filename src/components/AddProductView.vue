@@ -5,8 +5,7 @@ import { useToast } from 'vue-toast-notification'
 import DrawerView from '@/components/DrawerView.vue'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { ChevronDownIcon } from '@heroicons/vue/24/outline'
-
+import { ChevronDownIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import {
@@ -28,6 +27,20 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+
+import { Calculator, Calendar, CreditCard, Settings, Smile, User } from 'lucide-vue-next'
+
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut
+} from '@/components/ui/command'
+import VueMultiselect from 'vue-multiselect'
 import { useAuthStore } from '../stores/auth'
 
 import { createProduct, fethcStoreTemplates, fethcStoreInventory } from '@/services/apiServices'
@@ -58,13 +71,13 @@ interface Product {
   review_count?: number
   rate_tracking?: string
   template_id?: number
-  from_template?: boolean;
-  condition?: string;
+  from_template?: boolean
+  condition?: string
 }
 
 const authStore = useAuthStore()
 const $toast = useToast()
-
+const focused = ref(false)
 onMounted(() => {
   fethcStoreTemplates(authStore.state.account_id).then((res) => {
     //console.log(res.data)
@@ -111,12 +124,12 @@ onMounted(() => {
 // ]
 
 const conditions = ref({
-"New": "NW",
-"Open box": "OB",
-"Excellent": "EX",
-"Good": "GD",
-"Used": "US",
-"For parts": "FP",
+  New: 'NW',
+  'Open box': 'OB',
+  Excellent: 'EX',
+  Good: 'GD',
+  Used: 'US',
+  'For parts': 'FP'
 })
 const selectedCondition = ref()
 const productTemplates = ref([])
@@ -369,30 +382,59 @@ const createNewProduct = (new_product) => {
       // this.uploading_image = false;
     })
 }
+
+const dropdown = ref()
+
+const srcs = {
+  1: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+  2: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+  3: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
+  4: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
+  5: 'https://cdn.vuetifyjs.com/images/lists/5.jpg'
+}
 </script>
 
 <template>
   <DrawerView :step="0">
-    <div class="px-4 h-full py-">
+    <div class="px-4 h-full py- overflow-y-scroll pb-32">
       <!-- <Input placeholder="Search templates" /> -->
 
       <div class="my-6">
         <h2 class="font-bold text-lg my-6">Select Product</h2>
         <!-- {{ selectedProductObject }} {{}} -->
+        <v-autocomplete
+          label="Autocomplete"
+          item-title="product_name"
+          item-value="id"
+          :items="products"
+          v-model="selectedProductId"
+        >
+          <template v-slot:chip="{ props, item }">
+            <v-chip v-bind="props" :text="item.raw.product_name"></v-chip>
+          </template>
 
-        <Select v-model="selectedProductId">
+          <template v-slot:item="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :prepend-avatar="item?.raw?.avatar"
+              :title="item?.raw?.product_name"
+            ></v-list-item>
+          </template>
+        </v-autocomplete>
+
+        <!-- <Select :ref="dropdown" v-model="selectedProductId">
           <SelectTrigger>
             <SelectValue placeholder="Select a product template" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <!-- <SelectLabel>Fruits</SelectLabel> -->
+              <SelectLabel>Fruits</SelectLabel>
               <SelectItem :value="`${item.id}`" v-for="(item, idx) in products" :key="idx">
                 {{ item.product_name }}
               </SelectItem>
             </SelectGroup>
           </SelectContent>
-        </Select>
+        </Select> -->
         <!-- <div class="flex justify-around flex-wrap gap-x-4">
           <div
             v-for="(item, key) in products"
@@ -452,20 +494,18 @@ const createNewProduct = (new_product) => {
 
         <div class="my-4" v-else>
           <h2 class="font-bold my-2">{{ selectedProductName }}</h2>
-          <div class=" justify-between">
+          <div class="justify-between">
             <h4 class="font-medium">Condition</h4>
-            <div class=" flex-row gap-2">
-              <div
-                class="no-wrap flex"
-                v-for="(value, idx) in Object.keys(conditions)"
-                :key="idx"
-              >
+            <div class="flex-row gap-2">
+              <div class="no-wrap flex" v-for="(value, idx) in Object.keys(conditions)" :key="idx">
                 <input
                   type="radio"
                   :id="value"
                   name="condition"
                   :value="conditions[value]"
-                  @change="(e) => handleSelectCondition(e, selectedProductName, spec, conditions[value])"
+                  @change="
+                    (e) => handleSelectCondition(e, selectedProductName, spec, conditions[value])
+                  "
                 />
                 <label :for="value">
                   <span class="ml-2">{{ value }}</span>
@@ -487,7 +527,7 @@ const createNewProduct = (new_product) => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead class="w-[100px]"> Variant Name </TableHead>
+                  <TableHead class="w-[50px]"> Variant Name </TableHead>
                   <TableHead>Qty</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead class="text-right"> </TableHead>
@@ -495,13 +535,13 @@ const createNewProduct = (new_product) => {
               </TableHeader>
               <TableBody>
                 <TableRow v-for="(variants, idx) in uniqueVariants[item]" :key="idx">
-                  <TableCell class="font-medium"> {{ variants }} </TableCell>
+                  <TableCell class="font-medium"> <p class="w-20  ">{{ variants }}</p>  </TableCell>
                   <TableCell
                     ><Input
                       type="number"
                       :name="`${variants}-qty`"
                       :id="`${variants}-qty`"
-                      class="w-20"
+                      class="w-16"
                       @change="(e) => handleChange(e, variants, 'qty')"
                   /></TableCell>
                   <TableCell
@@ -509,11 +549,11 @@ const createNewProduct = (new_product) => {
                       type="number"
                       :name="`${variants}-price`"
                       :id="`${variants}-price`"
-                      class="w-20"
+                      class="w-16"
                       @change="(e) => handleChange(e, variants, 'price')"
                   /></TableCell>
                   <TableCell class="text-right">
-                    <Button variant="link" class="underline text-gray-400">Clear</Button>
+                    <Button variant="link" class="underline w-16 text-gray-400 p-0"><TrashIcon class="w-6 h-6" /></Button>
                   </TableCell>
                 </TableRow>
               </TableBody>

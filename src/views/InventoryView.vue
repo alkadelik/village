@@ -10,20 +10,35 @@ import {
 } from '@heroicons/vue/24/outline'
 import AppLayout from '@/layouts/AppLayout.vue'
 import AddProductView from '@/components/AddProductView.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
+const route = useRoute()
 
 const showAddProductView = () => {
   appStore.drawerIsOpen = true
   appStore.showAddProductView = true
 }
+
+onMounted(() => {
+  console.log(route.query)
+  if (route.query.addProduct) {
+    showAddProductView()
+  }
+})
 </script>
 
 <template>
-  <AppLayout class="relative p-4" pageTitle="Inventory" stateKey="showAddProductView"  navBtnText="add Product" :hasNavBtn="true">
-    <div v-if="!authStore.state.inventory.length" class="h-auto flex justify-center items-center">
+  <AppLayout
+    class="relative p-4"
+    pageTitle="Inventory"
+    stateKey="showAddProductView"
+    navBtnText="add Product"
+    :hasNavBtn="true"
+  >
+    <div v-if="!authStore.state.inventory.length" class="h-full flex justify-center items-center">
       <div class="text-center w-8/12">
         <img
           src="../assets/images/product-skeleton.png"
@@ -36,26 +51,27 @@ const showAddProductView = () => {
       </div>
     </div>
 
-    <div class="inventory ">
-      <div class="" v-for="product, i in authStore.state.inventory" :key="i">
-      <div class="product" @click="viewProductDetail(product)">
-        <div class="img-wrapper">
-          <!-- <img :src="baseUrl + product.product_image" alt=""> -->
-        </div>
-        <div class="content-wrapper">
-          <h3>{{ product.product_name }} </h3>
-          <p class="dark">&#8358;{{ product.price }}</p>
-          <span>{{ product.description }}</span>
-        </div>
+    <div class="inventory pt-12">
+      <div class="" v-for="(product, i) in authStore.state.inventory" :key="i">
+        <router-link :to="`/inventory/${product.id}`">
+          <div class="product">
+            <div class="img-wrapper">
+              <!-- <img :src="baseUrl + product.product_image" alt=""> -->
+            </div>
+            <div class="content-wrapper">
+              <h3>{{ product.product_name }}</h3>
+              <p class="dark">&#8358;{{ product.price }}</p>
+              <span>{{ product.description }}</span>
+            </div>
+          </div>
+        </router-link>
+        <!-- <a>Product Review</a> -->
       </div>
-      <!-- <a>Product Review</a> -->
-    </div>
     </div>
 
-    <AddProductView v-if="appStore.showAddProductView"/>
+    <AddProductView v-if="appStore.showAddProductView" />
   </AppLayout>
 </template>
-
 
 <style scoped>
 .inventory {
@@ -70,7 +86,7 @@ h3 {
   margin: 0;
   font-size: 20px;
   font-weight: bold;
-  color: #445B54;
+  color: #445b54;
 }
 h3::first-letter {
   text-transform: capitalize;
@@ -100,7 +116,7 @@ p {
   font-weight: 400;
   font-size: 14px;
   line-height: 28px;
-  color: #4CAF50 !important;
+  color: #4caf50 !important;
   cursor: pointer;
 }
 .img-wrapper {

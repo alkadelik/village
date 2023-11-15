@@ -20,7 +20,10 @@ authStore.$subscribe((mutation, state) => {
 </script>
 
 <template>
+<v-app>
   <RouterView />
+
+</v-app>
 </template>
 
 <style scoped>

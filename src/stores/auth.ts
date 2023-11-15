@@ -20,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
   //console.log(state.value)
 
   function login(values: { username?: string; password?: string }) {
+    let hasProducts = false
     apiLogin(values)
       .then((res) => {
         localStorage.setItem('leyyow_token', res.data.token)
@@ -34,19 +35,27 @@ export const useAuthStore = defineStore('auth', () => {
         state.value.account_id = res.data.account_id
         state.value.customers = res.data.customers
         state.value.inventory = res.data.inventory
+        if (res.data.inventory.length) {
+          hasProducts = true
+        }
+        state.value.orders = []
 
         if (store.verified[0] == 0) {
           state.value.email_verified = false
         }
         localStorage.setItem('leyyow', JSON.stringify(state.value))
 
-        $toast.success('Logged in successfully')
+        // $toast.success('Logged in successfully')
       })
-      .catch(() => {
-        $toast.error('Wrong or invalid credentials, or other error. Please try again')
+      .catch((e) => {
+        $toast.error(e.response.data.non_field_errors[0])
       })
       .finally(() => {
-        router.push('/dashboard')
+        if (hasProducts) {
+          router.push('/dashboard')
+        } else {
+          router.push('/inventory?addProduct=true')
+        }
         state.value.loading = false
       })
 
@@ -88,7 +97,7 @@ export const useAuthStore = defineStore('auth', () => {
           state.value.productTemplates = []
           state.value.store = res.data.store
 
-          router.push('/dashboard')
+          router.push('/inventory?addProduct=true')
         })
       })
       .catch(() => {

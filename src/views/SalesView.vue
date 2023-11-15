@@ -28,14 +28,15 @@ onMounted(() => {
     })
 })
 
-const customers = ref(authStore.state.customers)
+const customers = ref(authStore.state?.customers)
 
 </script>
 
 <template>
   <AppLayout 
    class="relative p-4"  pageTitle="Sales" stateKey="showAddSaleView"  navBtnText="add Sale" :hasNavBtn="true">
-    <div v-if="!authStore.state.orders?.length" class="flex justify-center items-center">
+   {{console.log(authStore.state.orders)}}
+    <div v-if="!authStore.state.orders || !authStore.state.orders?.length " class="flex justify-center items-center">
       <div class="text-center w-8/12">
         <img
           src="../assets/images/product-skeleton.png"
@@ -50,7 +51,7 @@ const customers = ref(authStore.state.customers)
     
     <div v-else>
 <div v-for="item in authStore.state.orders" :key="item.key">
-  <OrderCard :customer="customers.find(customer => customer.id === item.customer )" :order="item" />
+  <OrderCard  :customer="customers.find(customer => customer.id === item.customer )" :order="item" />
 </div>
     </div>
 
