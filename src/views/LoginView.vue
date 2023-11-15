@@ -54,21 +54,7 @@ const onSubmit = form.handleSubmit((values) => {
         <h2 class="font-bold text-lg mb-4">Welcome back</h2>
         <p class="text-slate-100">Enter your email and password to log in.</p>
       </div>
-      <v-carousel show-arrows hide-delimiter-background>
-        <template v-slot:prev="{ props }">
-          <v-btn variant="elevated" color="success" @click="props.onClick">Previous slide</v-btn>
-        </template>
-        <template v-slot:next="{ props }">
-          <v-btn variant="elevated" color="info" @click="props.onClick">Next slide</v-btn>
-        </template>
-        <v-carousel-item v-for="(slide, i) in slides" :key="i">
-          <v-sheet :color="colors[i]" height="100%">
-            <div class="d-flex fill-height justify-center align-center">
-              <div class="text-h2">{{ slide }} Slide</div>
-            </div>
-          </v-sheet>
-        </v-carousel-item>
-      </v-carousel>
+
     </div>
     <div class="w-full md:w-6/12 flex justify-center pb-32 md:pb-0 h-full bg-slate-100 md:overflow-y-hidden">
       <div class="md:w-10/12 xl:w-8/12 w-full">
@@ -126,7 +112,7 @@ const onSubmit = form.handleSubmit((values) => {
                 </router-link>
               </div>
 
-              <Button type="submit" class="w-full mt-6 font-bold" size="lg"> Login </Button>
+              <Button type="submit" class="w-full mt-6 font-bold text-white" size="lg"> Login </Button>
               <p class="text-center my-2">
                 Don't have an account?
                 <router-link to="/signup"

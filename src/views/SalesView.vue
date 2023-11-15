@@ -7,7 +7,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import AddSaleView from '@/components/AddSaleView.vue'
 import AddProductView from '@/components/AddProductView.vue'
 import OrderCard from '@/components/OrderCard.vue'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
@@ -30,13 +30,19 @@ onMounted(() => {
 
 const customers = ref(authStore.state?.customers)
 
+const computedOrdersWithCustomer = computed(() => {
+  let res = authStore.state.orders.filter(item => customers.value.find(customer => customer.id === item.customer ) )
+
+
+  return res
+})
 </script>
 
 <template>
   <AppLayout 
    class="relative p-4"  pageTitle="Sales" stateKey="showAddSaleView"  navBtnText="add Sale" :hasNavBtn="true">
    {{console.log(authStore.state.orders)}}
-    <div v-if="!authStore.state.orders || !authStore.state.orders?.length " class="flex justify-center items-center">
+    <div v-if="!computedOrdersWithCustomer?.length " class="flex justify-center items-center h-full">
       <div class="text-center w-8/12">
         <img
           src="../assets/images/product-skeleton.png"
@@ -50,7 +56,7 @@ const customers = ref(authStore.state?.customers)
     </div>
     
     <div v-else>
-<div v-for="item in authStore.state.orders" :key="item.key">
+<div v-for="item in computedOrdersWithCustomer" :key="item.key">
   <OrderCard  :customer="customers.find(customer => customer.id === item.customer )" :order="item" />
 </div>
     </div>

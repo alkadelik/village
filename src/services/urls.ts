@@ -55,3 +55,5 @@ export const saveBankUrl = `${prefix}/settlement/bank/create/`
 // Store
 export const storeUrl = `${prefix}/account/store/gadgets`
 
+// search
+export const searchUrl = `${prefix}/inventory/product/merchants/list/?search=`

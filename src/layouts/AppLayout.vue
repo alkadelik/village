@@ -113,31 +113,31 @@ onMounted(() => {
     </v-bottom-navigation> -->
     <div class="fixed left-0 bottom-0 shadow-2xl h-20 w-full bg-white">
       <ul class="flex justify-between px-6 py-4 text-gray-400">
-        <li @click="currentRoute = 0" class="text-primary">
+        <li @click="currentRoute = 0" :class="`${currentRoute == 0 ? 'active text-primary' : ''}`">
           <router-link to="/dashboard">
             <ChartPieIcon class="w-6 h-6 mx-auto " />
             <p class="text-center text-sm">Dashboard</p>
           </router-link>
         </li>
-        <li @click="currentRoute = 1" class="text-primary">
-          <router-link to="/dashboard">
+        <li @click="currentRoute = 1" :class="`${currentRoute == 1 ? 'active text-primary' : ''}`">
+          <router-link to="/find">
             <MagnifyingGlassIcon class="w-6 h-6 mx-auto " />
             <p class="text-center text-sm">Find</p>
           </router-link>
         </li>
-        <li @click="currentRoute = 2" class="text-primary">
+        <li @click="currentRoute = 2" :class="`${currentRoute == 2 ? 'active text-primary' : ''}`">
           <router-link to="/inventory">
             <BookmarkIcon class="w-6 h-6 mx-auto " />
             <p class="text-center text-sm">Inventory</p>
           </router-link>
         </li>
-        <li @click="currentRoute = 3" class="text-primary">
+        <li @click="currentRoute = 3" :class="`${currentRoute == 3 ? 'active text-primary' : ''}`">
           <router-link to="/sales">
             <PresentationChartLineIcon class="w-6 h-6 mx-auto " />
             <p class="text-center text-sm">Sales</p>
           </router-link>
         </li>
-        <li @click="currentRoute = 4" class="text-primary">
+        <li @click="currentRoute = 4" :class="`${currentRoute == 4 ? 'active text-primary' : ''}`">
           <router-link to="/customers">
             <UserGroupIcon class="w-6 h-6 mx-auto " />
             <p class="text-center text-sm">Customer</p>

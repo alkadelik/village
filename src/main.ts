@@ -17,6 +17,7 @@ import * as directives from 'vuetify/directives'
 const token = localStorage.getItem('leyyow_token')
 
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import colors from 'vuetify/util/colors'
 
 if (token) {
   axios.defaults.headers.common['Authorization'] = `Token ${token}`
@@ -26,13 +27,7 @@ const vuetify = createVuetify({
   components,
   directives,
   ssr: true,
-  theme: {
-    themes: {
-      light: {
-        primary: '#3f51b5' // Change this to your desired color
-      }
-    }
-  },
+  theme: false,
 
   icons: {
     defaultSet: 'mdi',

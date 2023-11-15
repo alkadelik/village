@@ -46,6 +46,11 @@ const router = createRouter({
       component: () => import('../views/DashboardView.vue')
     },
     {
+      path: '/find',
+      name: 'find',
+      component: () => import('../views/FindView.vue')
+    },
+    {
       path: '/forgot-password',
       name: 'forgot-password',
       component: () => import('../views/ForgotPassword.vue')

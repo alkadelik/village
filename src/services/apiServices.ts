@@ -136,3 +136,10 @@ export const verifyWaitlistEmail = (otp, email) => {
     url: `${urls.verifyWaitlistEmailUrl}${email}/${otp}/`
   })
 }
+
+export const search = (searchQuery: string) => {
+  return axios({
+    method: 'get',
+    url: urls.searchUrl + searchQuery
+  })
+}

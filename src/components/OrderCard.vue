@@ -60,12 +60,12 @@ onMounted(() => {})
 </script>
 
 <template>
-  <Collapsible v-if="customer && order">
+  <Collapsible v-if="order">
     <div
       class="border border-slate p-4 rounded-md my-2"
       @click.once="getOrderItems(order.order_ref)"
     >
-      <CollapsibleTrigger class="w-full">
+      <CollapsibleTrigger v-if=customer class="w-full">
         <div class="flex justify-between">
           <div class="order-customer">
             <h3>{{ customer.first_name }}</h3>
