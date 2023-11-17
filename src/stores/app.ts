@@ -13,6 +13,8 @@ export const useAppStore = defineStore('auth', {
     showAddCustomerView: false,
     showEditCustomerView: false,
     showNestedAddCustomerView: false,
+    showViewSearchDetails: false,
+    showProductDetails: false,
   }),
 
 });

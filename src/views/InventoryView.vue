@@ -10,6 +10,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import AppLayout from '@/layouts/AppLayout.vue'
 import AddProductView from '@/components/AddProductView.vue'
+import ProductDetails from '@/components/ProductDetails.vue'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -22,12 +23,24 @@ const showAddProductView = () => {
   appStore.showAddProductView = true
 }
 
+const showProductDetails = () => {
+  appStore.drawerIsOpen = true
+  appStore.showProductDetails = true
+}
+
 onMounted(() => {
   console.log(route.query)
   if (route.query.addProduct) {
     showAddProductView()
   }
 })
+
+const productToEdit = ref()
+
+const handleProductClick = (product) => {
+  showProductDetails()
+  productToEdit.value = product
+}
 </script>
 
 <template>
@@ -49,12 +62,12 @@ onMounted(() => {
         <p class="font-light my-3">Add products to your store so you can take orders easily.</p>
         <Button class="my-4 w-10/12" size="lg" @click="showAddProductView">Add Product</Button>
       </div>
-    </div>
+    </div>-*
 
     <div class="inventory pt-12">
       <div class="" v-for="(product, i) in authStore.state.inventory" :key="i">
-        <router-link :to="`/inventory/${product.id}`">
-          <div class="product">
+        <!-- <router-link :to="`/inventory/${product.id}`"> -->
+          <div class="product" @click="handleProductClick(product)">
             <div class="img-wrapper">
               <!-- <img :src="baseUrl + product.product_image" alt=""> -->
             </div>
@@ -64,12 +77,13 @@ onMounted(() => {
               <span>{{ product.description }}</span>
             </div>
           </div>
-        </router-link>
+        <!-- </router-link> -->
         <!-- <a>Product Review</a> -->
       </div>
     </div>
 
     <AddProductView v-if="appStore.showAddProductView" />
+    <ProductDetails v-if="appStore.showProductDetails"  :product="productToEdit"/>
   </AppLayout>
 </template>
 
