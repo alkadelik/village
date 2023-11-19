@@ -186,6 +186,7 @@ const fulfillmentStatus = (e) => {
   sale.value.fulfilled = e.target.value
 }
 const paymentStatus = (e) => {
+  console.log(e.target.value)
   sale.value.payment_status = e.target.value
 }
 const updateShipping = (e) => {
@@ -224,10 +225,11 @@ const handleSave = () => {
   )
 
   const { cart, ...newObject } = sale.value
+  console.log(sale.value)
   saveOrder(newObject)
     .then((res) => {
       //console.log(res.data.order)
-      authStore.state.order = res.data.order
+      authStore.state.orders = [...authStore.state.orders, ...res.data.order ]
       saveOrderItems(orderItems)
     })
     .catch((err) => {

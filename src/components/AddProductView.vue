@@ -203,6 +203,11 @@ const specs = ref({})
 
 const selectedProductSpecs = ref({})
 
+watch(selectedProductId, (count) => {
+  console.log(count)
+  selectedProductSpecs.value = {}
+})
+
 const uniqueVariants = computed(() => {
   if (selectedProductSpecs.value) {
     let arr = {}
@@ -334,7 +339,7 @@ const stringifiedVariants = computed(() => {
   let result = ''
 
   for (let variant in variants.value) {
-    result += `${variant},${variants.value[variant].qty},${variants.value[variant].price};`
+    result += `${variant},${variants.value[variant].qty},${variants.value[variant].price},${variants.value[variant].condition};`
   }
 
   return result
@@ -355,7 +360,7 @@ const handleSubmit = () => {
   inventoryItem.variant_options = stringifiedVariants.value
   inventoryItem.template_id = selectedProductObject.value.id
   inventoryItem.from_template = true
-  inventoryItem.condition = selectedCondition.value
+  // inventoryItem.condition = selectedCondition.value
   // inventoryItem.product_image = "/media/static/images/default_product.png"
   // inventoryItem.category = "gadgets"
   // compute variants
@@ -384,43 +389,42 @@ const createNewProduct = (new_product) => {
 }
 
 const dropdown = ref()
-
-const srcs = {
-  1: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-  2: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-  3: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-  4: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
-  5: 'https://cdn.vuetifyjs.com/images/lists/5.jpg'
-}
 </script>
 
 <template>
   <DrawerView :step="0">
-    <div class="px-4 h-full py- overflow-y-scroll pb-32">
+    <div class="px-4 h-full py- overflow-y-scroll pb-64">
       <!-- <Input placeholder="Search templates" /> -->
 
       <div class="my-6">
         <h2 class="font-bold text-lg my-6">Select Product</h2>
-        <!-- {{ selectedProductObject }} {{}} -->
-        <v-autocomplete
-          label="Autocomplete"
-          item-title="product_name"
-          item-value="id"
-          :items="products"
-          v-model="selectedProductId"
-        >
-          <template v-slot:chip="{ props, item }">
-            <v-chip v-bind="props" :text="item.raw.product_name"></v-chip>
-          </template>
+        <!-- {{ variants }} {{}} -->
 
-          <template v-slot:item="{ props, item }">
-            <v-list-item
-              v-bind="props"
-              :prepend-avatar="item?.raw?.avatar"
-              :title="item?.raw?.product_name"
-            ></v-list-item>
-          </template>
-        </v-autocomplete>
+        <div class="z-50">
+          <v-autocomplete
+            label="Select Product"
+            item-title="product_name"
+            item-value="id"
+            :items="products"
+            v-model="selectedProductId"
+              variant="solo-inverted"
+              bg-color="#fff"
+          >
+            <template v-slot:chip="{ props, item }">
+              <v-chip v-bind="props" variant="solo-inverted" :text="item.raw.product_name"></v-chip>
+            </template>
+
+            <template v-slot:item="{ props, item }">
+              <v-list-item
+                v-bind="props"
+              bg-color="#fff"
+              variant="solo-inverted"
+          
+                :title="item?.raw?.product_name"
+              ></v-list-item>
+            </template>
+          </v-autocomplete>
+        </div>
 
         <!-- <Select :ref="dropdown" v-model="selectedProductId">
           <SelectTrigger>
@@ -487,7 +491,7 @@ const srcs = {
           </div>
         </div>
       </div>
-
+      <!-- 
       <div>
         <h2 class="font-bold text-lg my-6">Select condition</h2>
         <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
@@ -514,11 +518,13 @@ const srcs = {
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div>
         <h2 class="font-bold text-lg my-6">Select Price and quantity</h2>
-        <p v-if="!Object.values(uniqueVariants).flat().length" class="text-center">
+        <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
+
+        <p v-else-if="!Object.values(uniqueVariants).flat().length" class="text-center">
           Please select a product specifications
         </p>
         <div v-else>
@@ -530,30 +536,55 @@ const srcs = {
                   <TableHead class="w-[50px]"> Variant Name </TableHead>
                   <TableHead>Qty</TableHead>
                   <TableHead>Price</TableHead>
+                  <TableHead>Condition</TableHead>
                   <TableHead class="text-right"> </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow v-for="(variants, idx) in uniqueVariants[item]" :key="idx">
-                  <TableCell class="font-medium"> <p class="w-20  ">{{ variants }}</p>  </TableCell>
+                <TableRow v-for="(variant, idx) in uniqueVariants[item]" :key="idx">
+                  <TableCell class="font-medium">
+                    <p class="w-20">{{ variant }}</p>
+                  </TableCell>
                   <TableCell
                     ><Input
                       type="number"
-                      :name="`${variants}-qty`"
-                      :id="`${variants}-qty`"
+                      :name="`${variant}-qty`"
+                      :id="`${variant}-qty`"
                       class="w-16"
-                      @change="(e) => handleChange(e, variants, 'qty')"
+                      @change="(e) => handleChange(e, variant, 'qty')"
                   /></TableCell>
                   <TableCell
                     ><Input
                       type="number"
-                      :name="`${variants}-price`"
-                      :id="`${variants}-price`"
+                      :name="`${variant}-price`"
+                      :id="`${variant}-price`"
                       class="w-16"
-                      @change="(e) => handleChange(e, variants, 'price')"
+                      @change="(e) => handleChange(e, variant, 'price')"
                   /></TableCell>
+                  <TableCell>
+                    <Select v-if="variants[variant]" v-model="variants[variant].condition">
+                      <SelectTrigger class="w-[160px]">
+                        <SelectValue placeholder="Select condition" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <!-- <SelectLabel>Fruits</SelectLabel> -->
+                          <SelectItem
+                            :value="conditions[condition]"
+                            v-for="condition in Object.keys(conditions)"
+                            :key="condition"
+                          >
+                            {{ condition }}
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <p v-else>select price and qty first</p></TableCell
+                  >
                   <TableCell class="text-right">
-                    <Button variant="link" class="underline w-16 text-gray-400 p-0"><TrashIcon class="w-6 h-6" /></Button>
+                    <Button variant="link" class="underline w-16 text-gray-400 p-0"
+                      ><TrashIcon class="w-6 h-6"
+                    /></Button>
                   </TableCell>
                 </TableRow>
               </TableBody>

@@ -22,7 +22,7 @@ const showAddProductView = () => {
 onMounted(() => {
   fetchOrders() // do this in orders in orders, maybe?
     .then((res) => {
-      
+      console.log(res.data)
       authStore.state.orders = res.data
       authStore.state.has_sale = authStore.state.orders.length > 0 
     })
@@ -31,6 +31,7 @@ onMounted(() => {
 const customers = ref(authStore.state?.customers)
 
 const computedOrdersWithCustomer = computed(() => {
+  console.log(authStore.state.orders, customers.value)
   let res = authStore.state.orders.filter(item => customers.value.find(customer => customer.id === item.customer ) )
 
 
@@ -41,7 +42,7 @@ const computedOrdersWithCustomer = computed(() => {
 <template>
   <AppLayout 
    class="relative p-4"  pageTitle="Sales" stateKey="showAddSaleView"  navBtnText="add Sale" :hasNavBtn="true">
-   {{console.log(authStore.state.orders)}}
+  
     <div v-if="!computedOrdersWithCustomer?.length " class="flex justify-center items-center h-full">
       <div class="text-center w-8/12">
         <img
