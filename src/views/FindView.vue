@@ -55,7 +55,7 @@ const showAddProductView = () => {
 
 <template>
   <AppLayout class="relative p-4" pageTitle="Find">
-    <div class="pt-8">
+    <div class="pt-">
       <Input
         id="username"
         type="text"

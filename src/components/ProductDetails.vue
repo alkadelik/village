@@ -1,13 +1,19 @@
-<script setup>
+<script setup lang="ts">
+import {
+  createProduct,
+  updateProduct,
+} from '@/services/apiServices'
+
 import DrawerView from '@/components/DrawerView.vue'
 import { ref } from 'vue'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 const props = defineProps(['product'])
 
 const editing = ref(false)
 const imageData = ref('')
-const edit_product = ref(props.product)
+const product_to_edit = ref(props.product)
 function previewImage(event) {
   saveProduct(event)
   var input = event.target
@@ -29,13 +35,29 @@ function saveProduct(e) {
     null
   }
 
-  this.editProduct(edit_product.value, edit_product.value.id)
+  // this.editProduct(edit_product.value, edit_product.value.id)
 }
+
+  function editProduct(product, id) {
+      updateProduct(product, id)
+          .then((res) => {
+            this.new_product.id ? 
+              this.$store.commit(mutationTypes.SAVE_PRODUCT, res.data.product) :
+              this.$store.commit(mutationTypes.UPDATE_PRODUCT, {'id': id, 'updated_product': res.data.product})
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            // this.loading = false;
+            // clear new_product.id when done
+          });
+    }
 </script>
 
 <template>
   <DrawerView drawerTitle="Select products" stateKey="showProductDetails">
-    <div class="container">
+    <div class="container h-screen overflow-y-scroll pb-48">
       <!-- <Header back_to='inventory' @back="back"></Header> -->
       <div v-if="editing">
         <div id="edit-product-modal" ref="close-product-modal" title="BootstrapVue">
@@ -47,14 +69,16 @@ function saveProduct(e) {
               <div class="form">
                 <div class="form-group">
                   <p class="dark label">Edit Product image</p>
-                  <Input
+                  <input
+                  class=""
                     type="file"
                     id="editUploadProductImage"
+                    name="editUploadProductImage"
                     @change="previewImage"
                     accept="image/*"
                   />
-                  <label for="editUploadProductImage" class="uploadProductImage"
-                    >Tap here to change produt image</label
+                  <label for="editUploadProductImage" class="uploadProductImage "
+                    >Tap here to change product image</label
                   >
                   <div class="image-preview" v-if="imageData.length > 0">
                     <img class="preview" :src="imageData" alt="preview" />
@@ -66,7 +90,7 @@ function saveProduct(e) {
                     type="text"
                     id="edit-product-name"
                     class="form-control"
-                    v-model="edit_product.product_name"
+                    v-model="product_to_edit.product_name"
                   />
                 </div>
                 <div class="form-group">
@@ -74,7 +98,7 @@ function saveProduct(e) {
                   <Input
                     type="text"
                     id="edit-product-price"
-                    v-model="edit_product.price"
+                    v-model="product_to_edit.price"
                     class="form-control"
                   />
                 </div>
@@ -85,22 +109,22 @@ function saveProduct(e) {
                   <Textarea
                     id="product-description"
                     class="form-control"
-                    v-model="edit_product.description"
+                    v-model="product_to_edit.description"
                   ></Textarea>
                 </div>
                 <div class="flex justify-between">
-                  <button
-                    class="btn-style text-red-500"
+                  <Button variant="destructive"
                     @click="editing = false"
                   >
                     Cancel
-                  </button>
-                  <button
+                </Button>
+                  <Button
+                  variant="outline"
                     class="btn-style "
-                    @click="editProduct(edit_product, product.id)"
+                    @click="editProduct(product_to_edit, product.id)"
                   >
                     Save edits
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -147,8 +171,8 @@ function saveProduct(e) {
           </div>
           <hr />
         </div>
-        <div class="product-btn mt-6">
-          <button @click="editing = true">Edit</button>
+        <div class="product-btn mt-6 w-full">
+          <Button variant="outline" class="border w-full border-primary" @click="editing = true">Edit</Button>
         </div>
       </div>
     </div>
@@ -204,7 +228,7 @@ button {
   font-weight: 600 !important;
   height: 45px;
   background: #fff;
-  width: 120px;
+  /* width: 120px; */
 }
 
 
@@ -228,6 +252,7 @@ img {
   margin-bottom: 8px;
 }
 .form label.uploadProductImage {
+  display: block;
   background: #fdfdfd;
   border: 0.5px dashed rgba(20, 62, 50, 0.25);
   border-radius: 8px;

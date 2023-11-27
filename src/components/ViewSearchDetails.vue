@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import DrawerView from '@/components/DrawerView.vue'
 import { ref } from 'vue'
 const props = defineProps(['products'])

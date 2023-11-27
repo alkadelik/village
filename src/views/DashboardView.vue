@@ -1,9 +1,23 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import  dayjs from 'dayjs/esm'
+import dayjs from 'dayjs/esm'
 import { fetchOrders, fetchMetrics } from '@/services/apiServices'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import {
+  ShoppingBagIcon,
+  ChartBarSquareIcon,
+  ShoppingCartIcon,
+  ArrowsUpDownIcon
+} from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
 
@@ -24,36 +38,62 @@ const timeOfDay = computed(() => {
   return hrs < 12 ? 'morning' : hrs >= 12 && hrs < 6 ? 'afternoon' : 'evening'
 })
 
-const period = ref(1)
+const period = ref('1')
 const metrics = ref([])
+
+watch(period, () => {
+  updateMetrics()
+})
 </script>
 
 <template>
   <AppLayout class="relative p-4" pageTitle="Dashboard">
-    <div class=" dashboard-top-margin">
-
+    <div class="mt-20 h-screen overflow-y-scroll">
       <section id="dashboard">
-        <div class="container">
-          <div class="welcome">
-            <h3>Good {{ timeOfDay }}</h3>
+        <div class="">
+          <div class="text-center my-8">
+            <h3 class="font-bold text-lg">
+              Good {{ timeOfDay }}, {{ authStore.state.store.store_name }}
+            </h3>
             <p class="">Here’s how is your bussiness is doing</p>
           </div>
 
-          <div class="report-wrapper">
+          <div class="report-wrapper border border-black">
+            <div class="flex justify-end mb-4">
+              <Select v-model="period" @change="updateMetrics">
+                <SelectTrigger class="w-[180px]">
+                  <SelectValue placeholder="Select a fruit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="0"> Today </SelectItem>
+                    <SelectItem value="1"> This week </SelectItem>
+                    <SelectItem value="2"> This month </SelectItem>
+                    <SelectItem value="3"> This year </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
             <!-- {{metrics}} -->
             <div class="report-card" v-for="(data, i) in metrics" :key="i">
-              <div class="img-wrapper">
-                <component :is="data.icon" />
+              <div :class="`img-wrapper ${i == 0 ? 'yellow' : i == 1 ? 'blue' : 'pink'}`">
+                <ShoppingBagIcon v-if="data.icon == 'Sale'" class="w-5 h-5 text-orange-300" />
+                <ChartBarSquareIcon
+                  v-if="data.icon == 'Transaction'"
+                  class="w-5 h-5 text-blue-300"
+                />
+                <ArrowsUpDownIcon v-if="data.icon == 'Arrows'" class="w-5 h-5 text-pink-300" />
               </div>
               <div class="content-wrapper">
-                <p>{{ data.title }}</p>
+                <p class="text-sm">{{ data.title }}</p>
                 <div class="total">
-                  <h3 class="h3"><span v-if="data.currency == 1">&#8358;</span>{{ data.data }}</h3>
+                  <h3 class="text-lg font-bold"><span v-if="data.currency == 1">&#8358;</span>{{ data.data }}</h3>
                   <span class="triangle-arrow">
                     {{ (data.up = 0 ? '-' : '+') }} {{ data.percent }}%
                   </span>
                 </div>
-                <span>vs {{ data.period }}</span>
+                <span class="text-sm">vs {{ data.period }}</span>
               </div>
             </div>
           </div>
@@ -68,13 +108,13 @@ const metrics = ref([])
                 <!-- <h3 class="h3">N200,000.00</h3> -->
               </div>
               <div class="form">
-                <select v-model="period" @change="updateMetrics">
+                <!-- <select v-model="period" @change="updateMetrics">
                   <option value="0">Today</option>
                   <option value="1">This week</option>
                   <option value="2">This month</option>
                   <option value="3">This year</option>
-                  <!-- <option value="4">Year to date</option> -->
-                </select>
+                  <option value="4">Year to date</option>
+                </select> -->
               </div>
             </div>
             <!-- <LineChartGenerator
@@ -98,7 +138,7 @@ const metrics = ref([])
 
 <style scoped>
 .dashboard-top-margin {
-  margin-top: 120px;
+  /* margin-top: 120px; */
 }
 .header {
   display: flex;
@@ -126,7 +166,7 @@ const metrics = ref([])
   padding: 16px 16px;
   display: grid;
   grid-template-columns: 48px auto;
-  align-items: self-start;
+  align-items: center;
   grid-gap: 14px;
   text-align: left;
   background: #ffffff;
@@ -141,10 +181,16 @@ const metrics = ref([])
 .report-card:not(:last-of-type) {
   margin-bottom: 16px;
 }
-.img-wrapper {
+.img-wrapper.blue {
   background: rgba(0, 179, 255, 0.08); /* blue */
+}
+.img-wrapper.yellow {
   background: rgba(255, 195, 80, 0.08); /* yellow */
+}
+.img-wrapper.pink {
   background: rgba(248, 78, 140, 0.08); /* pink */
+}
+.img-wrapper {
   border-radius: 8px;
   width: 48px;
   height: 48px;

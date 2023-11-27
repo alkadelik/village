@@ -21,8 +21,10 @@ authStore.$subscribe((mutation, state) => {
 
 <template>
 <v-app>
+<v-theme light>
+    <RouterView />
+</v-theme>
 
-  <RouterView />
 
 </v-app>
 </template>

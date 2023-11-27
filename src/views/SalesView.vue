@@ -17,14 +17,12 @@ const showAddProductView = () => {
   appStore.showAddSaleView = true
 }
 
-
-
 onMounted(() => {
   fetchOrders() // do this in orders in orders, maybe?
     .then((res) => {
       console.log(res.data)
       authStore.state.orders = res.data
-      authStore.state.has_sale = authStore.state.orders.length > 0 
+      authStore.state.has_sale = authStore.state.orders.length > 0
     })
 })
 
@@ -32,18 +30,21 @@ const customers = ref(authStore.state?.customers)
 
 const computedOrdersWithCustomer = computed(() => {
   console.log(authStore.state.orders, customers.value)
-  let res = authStore.state.orders.filter(item => customers.value.find(customer => customer.id === item.customer ) )
-
+  let res = authStore.state.orders
 
   return res
 })
 </script>
 
 <template>
-  <AppLayout 
-   class="relative p-4"  pageTitle="Sales" stateKey="showAddSaleView"  navBtnText="add Sale" :hasNavBtn="true">
-  
-    <div v-if="!computedOrdersWithCustomer?.length " class="flex justify-center items-center h-full">
+  <AppLayout
+    class="relative p-4"
+    pageTitle="Sales"
+    stateKey="showAddSaleView"
+    navBtnText="add Sale"
+    :hasNavBtn="true"
+  >
+    <div v-if="!computedOrdersWithCustomer?.length" class="flex justify-center items-center h-full">
       <div class="text-center w-8/12">
         <img
           src="../assets/images/product-skeleton.png"
@@ -55,13 +56,14 @@ const computedOrdersWithCustomer = computed(() => {
         <Button class="my-4 w-10/12" size="lg" @click="showAddProductView">Add Sale</Button>
       </div>
     </div>
-    
-    <div v-else>
-<div v-for="item in computedOrdersWithCustomer" :key="item.key">
-  <OrderCard  :customer="customers.find(customer => customer.id === item.customer )" :order="item" />
-</div>
+
+    <div v-else class="h-screen overflow-y-scroll pb-56">
+      <div v-for="(item, i) in computedOrdersWithCustomer" :key="item.key">
+        <!-- .find(customer => customer.id === item.customer ) -->
+        <OrderCard :customer="customers[0]" :order="item" :index="i" />
+      </div>
     </div>
 
-    <AddSaleView v-if="appStore.showAddSaleView" />
+    <AddSaleView v-if="appStore.showAddSaleView"  />
   </AppLayout>
 </template>

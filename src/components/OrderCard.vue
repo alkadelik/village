@@ -2,6 +2,7 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { computed, onMounted, ref } from 'vue'
 import { fetchOrderItems } from '@/services/apiServices'
+import OrderItems from '@/components/OrderItems.vue'
 
 const props = defineProps(['customer', 'order'])
 
@@ -9,6 +10,7 @@ const order_items = ref([])
 
 const getOrderItems = (ref) => {
   fetchOrderItems(ref).then((res) => {
+    console.log(res)
     order_items.value = res.data
   })
 }
@@ -65,7 +67,7 @@ onMounted(() => {})
       class="border border-slate p-4 rounded-md my-2"
       @click.once="getOrderItems(order.order_ref)"
     >
-      <CollapsibleTrigger v-if=customer class="w-full">
+      <CollapsibleTrigger v-if="customer" class="w-full">
         <div class="flex justify-between">
           <div class="order-customer">
             <h3>{{ customer.first_name }}</h3>
@@ -80,7 +82,7 @@ onMounted(() => {})
             &#x2022;
             <p style="margin-left: 5px">
               {{ order_date }}
-               <!-- {{  order_date == 'Today' || order_date == 'Yesterday'
+              <!-- {{  order_date == 'Today' || order_date == 'Yesterday'
                   ? '' :ordinal_suffix }} -->
               {{
                 order_date == 'Today' || order_date == 'Yesterday'
@@ -89,15 +91,24 @@ onMounted(() => {})
               }}
             </p>
           </div>
-          <!-- <p>{{ order.fulfilled }}/{{ order.items_count }}</p> -->
+          <p>{{ order.fulfilled }}/{{ order.items_count }}</p>
         </div>
-
         <div id="fulfillment">
           <p>
             {{ order.unique_items }} items
             <!-- {{ order.unique_items > 1 ? `& ${order.unique_items - 1} other items` : "" }} -->
           </p>
           <p class="pending">{{ order.fulfilled == 1 ? 'Fulfilled' : 'Pending' }}</p>
+        </div>
+        <div class="bg-gray-100 p-4 rounded-md my-4">
+          <div class="flex justify-between w-full">
+            <h4 class="bold">Products</h4>
+            <div class="flex items-center gap-2">
+              <label for="mark-all">Check All</label>
+              <input type="checkbox" name="mark-all" id="mark-all" />
+            </div>
+          </div>
+          <OrderItems v-for="(item, i) in [1, 2, 3]" :key="i" :item="item"></OrderItems>
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>

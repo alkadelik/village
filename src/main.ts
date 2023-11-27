@@ -22,12 +22,24 @@ import colors from 'vuetify/util/colors'
 if (token) {
   axios.defaults.headers.common['Authorization'] = `Token ${token}`
 }
+const myCustomLightTheme = {
+  dark: false,
+  colors: {
+    primary: '#4CAF50',
+    secondary: '#19212C',
+  },
+}
 
 const vuetify = createVuetify({
   components,
   directives,
   ssr: true,
-  theme: false,
+  theme: {
+    defaultTheme: 'myCustomLightTheme',
+    themes: {
+      myCustomLightTheme
+    }
+  },
 
   icons: {
     defaultSet: 'mdi',

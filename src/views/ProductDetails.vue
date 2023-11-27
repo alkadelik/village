@@ -45,7 +45,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 // import Header from "@/components/Header"
 // import { mapGetters } from "vuex"
 // import { SET_HEADER_SETTINGS } from "@/store/mutationTypes"

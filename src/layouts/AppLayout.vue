@@ -51,7 +51,7 @@ onMounted(() => {
 <template>
   <div class="h-screen relative p-4 overflow-y-hidden">
     <div class="fixed bg-white top-0 left-0 w-full p-4 flex justify-between">
-      <h2 class="font-bold text-xl text-secondary">{{ pageTitle }}</h2>
+      <h2 class="font-bold text-xl text-black">{{ pageTitle }}</h2>
       <div class="w-6/12 gap-3 justify-end flex">
         <Button v-if="hasNavBtn" size="sm" @click="openDrawer(stateKey, stateKey2)"
           ><PlusIcon class="w-4 h-4"
@@ -60,7 +60,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="mt-6 h-screen">
+    <div class="mt-16 h-screen">
       <slot></slot>
     </div>
 

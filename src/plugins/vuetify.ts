@@ -1,37 +1,44 @@
-// import { aliases, mdi } from "vuetify/iconsets/mdi";
+// import { aliases, mdi } from 'vuetify/iconsets/mdi'
 // import { mdiListBox } from '@mdi/js'
 // // Styles
-// import "@mdi/font/css/materialdesignicons.css";
-// import "vuetify/styles";
+// import '@mdi/font/css/materialdesignicons.css'
+// import 'vuetify/styles'
 
 // // Vuetify
-// import { createVuetify } from "vuetify";
+// import { createVuetify } from 'vuetify'
 
-// import {
-//   VDataTable,
-//   VDataTableServer,
-//   VDataTableVirtual,
-// } from "vuetify/labs/VDataTable";
+// const myCustomLightTheme = {
+//   dark: false,
+
+// }
+
+// import { VDataTable, VDataTableServer, VDataTableVirtual } from 'vuetify/labs/VDataTable'
 // import { VBottomSheet } from 'vuetify/labs/VBottomSheet'
 
 // export default createVuetify(
 //   {
+//     theme: {
+//         defaultTheme: 'myCustomLightTheme',
+//         themes: {
+//           myCustomLightTheme,
+//         },
+//       },
 //     components: {
 //       VDataTable,
 //       VDataTableServer,
 //       VDataTableVirtual,
-//       VBottomSheet,
+//       VBottomSheet
 //     },
 //     icons: {
-//       defaultSet: "mdi",
+//       defaultSet: 'mdi',
 //       aliases: {
 //         ...aliases,
 //         listAlt: mdiListBox
 //       },
 //       sets: {
-//         mdi,
-//       },
-//     },
+//         mdi
+//       }
+//     }
 //   }
 //   // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
-// );
+// )

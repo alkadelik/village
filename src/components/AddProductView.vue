@@ -407,21 +407,17 @@ const dropdown = ref()
             item-value="id"
             :items="products"
             v-model="selectedProductId"
-              variant="solo-inverted"
-              bg-color="#fff"
+            variant="underlined"
+            class="z-50"
+            elevation="2"
+            style="position: relative; z-index: 3"
           >
             <template v-slot:chip="{ props, item }">
-              <v-chip v-bind="props" variant="solo-inverted" :text="item.raw.product_name"></v-chip>
+              <v-chip v-bind="props" :text="item.raw.product_name"></v-chip>
             </template>
 
             <template v-slot:item="{ props, item }">
-              <v-list-item
-                v-bind="props"
-              bg-color="#fff"
-              variant="solo-inverted"
-          
-                :title="item?.raw?.product_name"
-              ></v-list-item>
+              <v-list-item v-bind="props" :title="item?.raw?.product_name"></v-list-item>
             </template>
           </v-autocomplete>
         </div>

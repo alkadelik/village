@@ -62,9 +62,9 @@ const handleProductClick = (product) => {
         <p class="font-light my-3">Add products to your store so you can take orders easily.</p>
         <Button class="my-4 w-10/12" size="lg" @click="showAddProductView">Add Product</Button>
       </div>
-    </div>-*
+    </div>
 
-    <div class="inventory pt-12">
+    <div class="inventory">
       <div class="" v-for="(product, i) in authStore.state.inventory" :key="i">
         <!-- <router-link :to="`/inventory/${product.id}`"> -->
           <div class="product" @click="handleProductClick(product)">

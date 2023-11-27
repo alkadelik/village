@@ -12,10 +12,22 @@ import {
 import AppLayout from '@/layouts/AppLayout.vue'
 import AddCustomerView from '@/components/AddCustomerView.vue'
 import EditCustomerView from '@/components/EditCustomerView.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
+
+const searchText = ref('')
+
+const filteredCustomers = computed(() => {
+  return !searchText.value
+    ? authStore.state.customers
+    : authStore.state.customers.filter((item) =>
+        `${item.first_name} ${item.last_name} ${item.email} ${item.phone}`
+          .toLowerCase()
+          .includes(searchText.value)
+      )
+})
 
 const showAddProductView = () => {
   appStore.drawerIsOpen = true
@@ -58,11 +70,12 @@ const selectFunction = (id, customer) => {
     </div>
 
     <div v-else class="p-2">
-      <Input class="w-full" placeholder="Type customer name to search" />
-
+      <Input class="w-full" v-model="searchText" placeholder="Type customer name to search" />
+      <p v-if="!filteredCustomers.length" class="mt-8">no customers found</p>
       <div
+        v-else
         class="select-customer-wrapper"
-        v-for="(customer, i) in authStore.state.customers"
+        v-for="(customer, i) in filteredCustomers"
         :key="i"
         @click="selectFunction(customer.id, customer)"
       >
