@@ -227,20 +227,26 @@ const handleSave = () => {
   const { cart, ...newObject } = sale.value
   console.log(sale.value)
   saveOrder(newObject)
-    .then((res) => {
-      //console.log(res.data.order)
-      authStore.state.orders = [...authStore.state.orders, ...res.data.order ]
-      saveOrderItems(orderItems)
+    .then(async (res) => {
+      console.log(res.data.order, orderItems.value)
+      authStore.state.orders = [...authStore.state.orders, res.data.order]
+
+      await     saveOrderItems(orderItems.value)
+        .then((res) => {
+          console.log(res, 'res')
+        })
+        .catch((err) => {
+          console.log(err, 'err')
+        })
     })
-    .catch((err) => {
-      $toast.error('something went wrong')
-    })
+
     .finally(() => {
       $toast.success('Sale Created successfully')
-      appStore.drawerIsOpen = false
-      setTimeout(() => {
-        appStore.showAddSaleView = false
-      }, 300)
+  
+      // appStore.drawerIsOpen = false
+      // setTimeout(() => {
+      //   appStore.showAddSaleView = false
+      // }, 300)
     })
 }
 
@@ -275,7 +281,9 @@ const reset = () => {
 
     <div v-show="activeStep == 0" class="px-4 h-full relative">
       <p class="text-center my-3">select products for this sale</p>
-      <p v-if="!authStore.state.inventory.length" class="text-center my-3">You have no products to sell from please create one </p>
+      <p v-if="!authStore.state.inventory.length" class="text-center my-3">
+        You have no products to sell from please create one
+      </p>
       <!-- {{ unpacked_cart }} -->
       <div class="form products">
         <div class="form-group product" v-for="(product, i) in authStore.state.inventory" :key="i">

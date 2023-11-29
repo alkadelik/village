@@ -8,6 +8,7 @@ import { useRoute, useRouter } from 'vue-router';
 export const useAppStore = defineStore('auth', {
   state: () => ({
     drawerIsOpen: false,
+    showAddProductFromTemplateView: false,
     showAddProductView: false,
     showAddSaleView: false,
     showAddCustomerView: false,
@@ -15,6 +16,7 @@ export const useAppStore = defineStore('auth', {
     showNestedAddCustomerView: false,
     showViewSearchDetails: false,
     showProductDetails: false,
+    showMultipleViews:false
   }),
 
 });

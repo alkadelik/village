@@ -6,6 +6,7 @@ import { search } from '@/services/apiServices'
 import { ref } from 'vue'
 import { useAppStore } from '../stores/app'
 import ViewSearchDetails from '@/components/ViewSearchDetails.vue'
+import { UserIcon, MapPinIcon } from '@heroicons/vue/24/outline'
 
 function debounce(fn, wait) {
   let timer
@@ -68,7 +69,7 @@ const showAddProductView = () => {
         <MagnifyingGlassIcon class="icon w-6 h-6 absolute top-2 left-2" />
       </Input>
 
-      <div class="mt-8 overflow-y-scroll h-screen pb-64">
+      <div class="mt-8 overflow-y-scroll h-screen pb-64 px-2">
         <p v-if="!merchants.length" class="text-center">Search for a product</p>
         <div v-else>
           <p class="text-center">Search results for: {{ searchField }}</p>
@@ -76,24 +77,38 @@ const showAddProductView = () => {
           <div
             v-for="product in merchants"
             :key="product.store_id"
-            class="border rounded-md p-4 my-2"
+            class="shadow-md border rounded-md p-4 my-2"
           >
             <div class="flex justify-between items-center">
-              <p class="font-bold">{{ product.store_id }}</p>
+              <div class="flex items-center gap-2">
+                <UserIcon class="w-6 h-6" />
+                <p class="font-bold">{{ product.store_id }}</p>
+                <button
+                @click="makeCall(product.store__phone1)"
+                  class="rounded-full px-3 py-0.5 text-sm bg-primary bg-opacity-30 text-white flex gap-2 items-center"
+                >
+                  <PhoneIcon class="w-4 h-4" />Call
+                </button>
+              </div>
 
-              <span class="border py-1 px-3 rounded-md" @click="showAddProductView()">{{ products.length }}</span>
+              <span
+                class="bg-green-400 bg-opacity-30 text-primary py-1 px-3 rounded-full text-sm"
+                @click="showAddProductView()"
+                >{{ products.length }} in stock</span
+              >
             </div>
-            <div class="flex justify-between items-center py-4">
-              <p @click="() => makeCall(product.store__phone1)">{{ product.store__phone1 }}</p>
+            <div class="flex justify-between items-center py-4 gap-2 text-sm text-gray-600">
+              <MapPinIcon class="w-6 h-6" />
+              <p>No 29 Obafemi Awolowo way, Ikeja 101233, lagos</p>
+              <!-- <p @click="() => makeCall(product.store__phone1)">{{ product.store__phone1 }}</p>
 
-              <p class="flex gap-2 items-center"><span>Call</span> <PhoneIcon class="w-4 h-4" /></p>
+              <p class="flex gap-2 items-center"><span>Call</span></p> -->
             </div>
           </div>
         </div>
       </div>
     </div>
-    <ViewSearchDetails v-if="appStore.showViewSearchDetails" :products="products"/>
-
+    <ViewSearchDetails v-if="appStore.showViewSearchDetails" :products="products" />
   </AppLayout>
 </template>
 

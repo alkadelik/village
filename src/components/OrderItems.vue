@@ -1,19 +1,19 @@
 <template>
-  <div class="items" :class="{ active: manageOrder }">
-    <div class="product-detail">
-      <div class="img-wrapper" v-if="item.product_image">
-        <img :src="baseUrl + item.product_image" alt="product_image" />
+  <div class="flex justify-between my-4" :class="{ active: manageOrder }">
+    <div class="flex items-center gap-2">
+      <div class=" w-12 h-12 bg-white rounded-md" v-if="!item.product_image">
+        <!-- <img :src="baseUrl + item.product_image" alt="product_image" /> -->
       </div>
 
       <div class="name">
-        <p class="p">{{ item.product_name }}f</p>
-        <p>Qty: {{ item.qty }}</p>
+        <p class="font-bold text-sm">{{ item.product_name }}Unisex shoe</p>
+        <p class="text-left text-sm">Qty: {{ item.qty }}90</p>
       </div>
     </div>
     <div class="price">
       <div class="product-price">
     
-        <p class="p">&#8358;{{ item.sub_total }} g</p>
+        <p class="text-sm font-bold text-right">&#8358;{{ item.sub_total }} 3000</p>
 
             <div class="flex items-center gap-2">
           <label for="mark-all">fulfilled</label>
@@ -34,7 +34,7 @@ defineProps(['item'])
 .items,
 .product-detail {
   display: flex;
-  flex-direction: row;
+  /* flex-direction: row; */
 }
 .items {
   justify-content: space-between;

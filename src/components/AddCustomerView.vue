@@ -35,7 +35,7 @@ const formSchema = toTypedSchema(
     address: z.string(),
     city: z.string(),
     phone: z.number(),
-    email: z.string().email('Please enter a valid email address').min(5),
+    email: z.string().email('Please enter a valid email address').min(5)
   })
 )
 
@@ -45,18 +45,17 @@ const form = useForm({
 const onSubmit = form.handleSubmit((values) => {
   //console.log('Form submitted!', values)
 
-  		saveCustomer({...values, line1: ''})
-			.then((res) => {
-				// this.new_customer_id = res.data.customer.id
-				authStore.state.customers.push(res.data.customer)
-        $toast.success("Customer createed successfully")
-    appStore.showAddCustomerView = false
-
-			})
-      .catch(() =>{
-        $toast.error("Something went wrong")
-
-      })
+  saveCustomer({ ...values, line1: '' })
+    .then((res) => {
+      // this.new_customer_id = res.data.customer.id
+      authStore.state.customers.push(res.data.customer)
+      $toast.success('Customer createed successfully', { position: 'top' })
+      appStore.showAddCustomerView = false
+      authStore.state.customers = [...authStore.state.customers, res.data.customer]
+    })
+    .catch(() => {
+      $toast.error('Something went wrong')
+    })
   //   authStore.login(values)
 })
 </script>
@@ -74,13 +73,7 @@ const onSubmit = form.handleSubmit((values) => {
                 ><span class="text-secondary text-base font-light">First Name</span></FormLabel
               >
               <FormControl>
-                <Input
-                  id="username"
-                  type="text"
-                  
-                  class="mt-3 mb-4"
-                  v-bind="componentField"
-                >
+                <Input id="username" type="text" class="mt-3 mb-4" v-bind="componentField">
                   <!-- <EnvelopeIcon class="icon w-6 h-6 absolute top-2 left-2" /> -->
                 </Input>
               </FormControl>
@@ -93,13 +86,7 @@ const onSubmit = form.handleSubmit((values) => {
                 ><span class="text-secondary text-base font-light">Last Name</span></FormLabel
               >
               <FormControl>
-                <Input
-                  id="username"
-                  type="text"
-                
-                  class="mt-3 mb-4"
-                  v-bind="componentField"
-                >
+                <Input id="username" type="text" class="mt-3 mb-4" v-bind="componentField">
                   <!-- <EnvelopeIcon class="icon w-6 h-6 absolute top-2 left-2" /> -->
                 </Input>
               </FormControl>
@@ -125,13 +112,7 @@ const onSubmit = form.handleSubmit((values) => {
           <FormItem>
             <FormLabel><span class="text-secondary text-base font-light">address</span></FormLabel>
             <FormControl>
-              <Input
-                id="address"
-                type="text"
-            
-                class="mt-3 mb-4"
-                v-bind="componentField"
-              >
+              <Input id="address" type="text" class="mt-3 mb-4" v-bind="componentField">
                 <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
               /> -->
               </Input>
@@ -139,17 +120,11 @@ const onSubmit = form.handleSubmit((values) => {
             <FormMessage />
           </FormItem>
         </FormField>
-          <FormField v-slot="{ componentField }" name="city">
+        <FormField v-slot="{ componentField }" name="city">
           <FormItem>
             <FormLabel><span class="text-secondary text-base font-light">city</span></FormLabel>
             <FormControl>
-              <Input
-                id="address"
-                type="text"
-            
-                class="mt-3 mb-4"
-                v-bind="componentField"
-              >
+              <Input id="address" type="text" class="mt-3 mb-4" v-bind="componentField">
                 <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
               /> -->
               </Input>

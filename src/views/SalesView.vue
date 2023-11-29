@@ -20,7 +20,7 @@ const showAddProductView = () => {
 onMounted(() => {
   fetchOrders() // do this in orders in orders, maybe?
     .then((res) => {
-      console.log(res.data)
+      console.log(res.data, ' f')
       authStore.state.orders = res.data
       authStore.state.has_sale = authStore.state.orders.length > 0
     })

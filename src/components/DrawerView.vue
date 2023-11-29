@@ -5,12 +5,16 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
 import { useAppStore } from '../stores/app'
 
 const appStore = useAppStore()
- const emit = defineEmits(['close'])
+const emit = defineEmits(['close'])
 const props = defineProps(['step', 'reduceStep', 'stateKey', 'showAddCustomerButton'])
 
 const closeDrawer = () => {
+  emit('close')
+
   if (appStore.showNestedAddCustomerView) {
     appStore.showNestedAddCustomerView = false
+  } else if (appStore.showMultipleViews) {
+    emit('close')
   } else {
     if (props.step == 0 || !props.step) {
       appStore.drawerIsOpen = false

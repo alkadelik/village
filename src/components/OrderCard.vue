@@ -98,14 +98,14 @@ onMounted(() => {})
             {{ order.unique_items }} items
             <!-- {{ order.unique_items > 1 ? `& ${order.unique_items - 1} other items` : "" }} -->
           </p>
-          <p class="pending">{{ order.fulfilled == 1 ? 'Fulfilled' : 'Pending' }}</p>
+          <p class="pending text-primary">{{ order.fulfilled == 1 ? 'Fulfilled' : 'Pending' }}</p>
         </div>
-        <div class="bg-gray-100 p-4 rounded-md my-4">
-          <div class="flex justify-between w-full">
-            <h4 class="bold">Products</h4>
+        <div class="bg-gray-100 bg-opacity-30 p-4 rounded-md my-4">
+          <div class="flex justify-between w-full py-2">
+            <h4 class="font-bold">Products</h4>
             <div class="flex items-center gap-2">
-              <label for="mark-all">Check All</label>
-              <input type="checkbox" name="mark-all" id="mark-all" />
+              <span  class="text-sm underline">Check All</span>
+              <!-- <input type="checkbox" name="mark-all" id="mark-all" /> -->
             </div>
           </div>
           <OrderItems v-for="(item, i) in [1, 2, 3]" :key="i" :item="item"></OrderItems>

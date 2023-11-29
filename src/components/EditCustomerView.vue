@@ -22,6 +22,9 @@ import {
 } from '@/components/ui/form'
 import { updateCustomer } from '@/services/apiServices'
 import { useAppStore } from '../stores/app'
+import { useToast } from 'vue-toast-notification'
+
+const $toast = useToast()
 
 const appStore = useAppStore()
 const formSchema = toTypedSchema(
@@ -47,17 +50,24 @@ const form = useForm({
 })
 
 function editCustomer(updatedCustomer) {
-  updateCustomer(updatedCustomer, props.customer.id).then((res) => {
-    // console.log(res.data)
-    const index = appStore.state.customers.findIndex(obj => obj.id === res.data.id);
+  updateCustomer(updatedCustomer, props.customer.id)
+    .then((res) => {
+      // console.log(res.data)
+      const index = appStore.state.customers.findIndex((obj) => obj.id === res.data.id)
 
-  // If the object with the specified id is found, replace it with the newObject
-  if (index !== -1) {
-    appStore.state.customers[index] = res.data;
-  }
-    
-    // give feedback
-  })
+      // If the object with the specified id is found, replace it with the newObject
+      if (index !== -1) {
+        appStore.state.customers[index] = res.data
+      }
+
+      // give feedback
+      appStore.showEditCustomerView = false
+
+      $toast.success('Customer updated successfully', { position: 'top' })
+    })
+    .catch(() => {
+      $toast.error('Something went wrong')
+    })
 }
 
 const onSubmit = form.handleSubmit((values) => {

@@ -25,7 +25,7 @@ export const useAuthStore = defineStore('auth', () => {
       .then((res) => {
         localStorage.setItem('leyyow_token', res.data.token)
         axios.defaults.headers.common['Authorization'] = `Token ${res.data.token}`
-
+console.log(res.data)
         const store = res.data.store
         store.slug = res.data.slug
 

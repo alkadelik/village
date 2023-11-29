@@ -2,6 +2,14 @@
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '../stores/auth'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import {
   ChartPieIcon,
   BookmarkIcon,
   PresentationChartLineIcon,
@@ -12,13 +20,16 @@ import {
 import { useAppStore } from '../stores/app'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-defineProps(['pageTitle', 'hasNavBtn', 'navBtnText', 'stateKey'])
+defineProps(['pageTitle', 'hasNavBtn', 'hasMenu', 'navBtnText', 'stateKey', 'stateKey2', 'stateKey3'])
 const authStore = useAuthStore()
 const appStore = useAppStore()
 const route = useRoute()
 const openDrawer = (key) => {
+  console.log(key)
   appStore.drawerIsOpen = true
   appStore[key] = true
+
+  console.log(appStore)
 }
 
 const currentRoute = ref(0)
@@ -53,7 +64,20 @@ onMounted(() => {
     <div class="fixed bg-white top-0 left-0 w-full p-4 flex justify-between">
       <h2 class="font-bold text-xl text-black">{{ pageTitle }}</h2>
       <div class="w-6/12 gap-3 justify-end flex">
-        <Button v-if="hasNavBtn" size="sm" @click="openDrawer(stateKey, stateKey2)"
+        <DropdownMenu v-if="hasMenu">
+          <DropdownMenuTrigger>
+            <Button v-if="hasNavBtn" size="sm"><PlusIcon class="w-4 h-4" /></Button
+          ></DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Add Product</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem @click="openDrawer(stateKey)"
+              >Add from template</DropdownMenuItem
+            >
+            <DropdownMenuItem @click="openDrawer(stateKey2)">Add New</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Button v-else-if="hasNavBtn" @click="openDrawer(stateKey)" size="sm"
           ><PlusIcon class="w-4 h-4"
         /></Button>
         <Button variant="destructive" size="sm" @click="authStore.logout()">Logout</Button>
@@ -115,31 +139,31 @@ onMounted(() => {
       <ul class="flex justify-between px-6 py-4 text-gray-400">
         <li @click="currentRoute = 0" :class="`${currentRoute == 0 ? 'active text-primary' : ''}`">
           <router-link to="/dashboard">
-            <ChartPieIcon class="w-6 h-6 mx-auto " />
+            <ChartPieIcon class="w-6 h-6 mx-auto" />
             <p class="text-center text-sm">Dashboard</p>
           </router-link>
         </li>
         <li @click="currentRoute = 1" :class="`${currentRoute == 1 ? 'active text-primary' : ''}`">
           <router-link to="/find">
-            <MagnifyingGlassIcon class="w-6 h-6 mx-auto " />
+            <MagnifyingGlassIcon class="w-6 h-6 mx-auto" />
             <p class="text-center text-sm">Find</p>
           </router-link>
         </li>
         <li @click="currentRoute = 2" :class="`${currentRoute == 2 ? 'active text-primary' : ''}`">
           <router-link to="/inventory">
-            <BookmarkIcon class="w-6 h-6 mx-auto " />
+            <BookmarkIcon class="w-6 h-6 mx-auto" />
             <p class="text-center text-sm">Inventory</p>
           </router-link>
         </li>
         <li @click="currentRoute = 3" :class="`${currentRoute == 3 ? 'active text-primary' : ''}`">
           <router-link to="/sales">
-            <PresentationChartLineIcon class="w-6 h-6 mx-auto " />
+            <PresentationChartLineIcon class="w-6 h-6 mx-auto" />
             <p class="text-center text-sm">Sales</p>
           </router-link>
         </li>
         <li @click="currentRoute = 4" :class="`${currentRoute == 4 ? 'active text-primary' : ''}`">
           <router-link to="/customers">
-            <UserGroupIcon class="w-6 h-6 mx-auto " />
+            <UserGroupIcon class="w-6 h-6 mx-auto" />
             <p class="text-center text-sm">Customer</p>
           </router-link>
         </li>
@@ -148,6 +172,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

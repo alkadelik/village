@@ -76,7 +76,6 @@ interface Product {
   condition?: string
 }
 
-const appStore = useAppStore()
 const authStore = useAuthStore()
 const $toast = useToast()
 const focused = ref(false)
@@ -389,15 +388,19 @@ const createNewProduct = (new_product) => {
       // this.uploading_image = false;
     })
 }
-
-const dropdown = ref()
 const props = defineProps(['stateKey'])
+const appStore = useAppStore()
 
 const close = () => {
+  console.log(props)
+
   setTimeout(() => {
-    appStore.showAddProductView = false
+    appStore.showAddProductFromTemplateView = false
   }, 500)
+  console.log(appStore)
 }
+
+const dropdown = ref()
 </script>
 
 <template>
@@ -406,8 +409,235 @@ const close = () => {
       <!-- <Input placeholder="Search templates" /> -->
 
       <div class="my-6">
-        <h2 class="font-bold text-lg my-6">Select Product normally</h2>
+        <h2 class="font-bold text-lg my-6">Select Product</h2>
+        <!-- {{ variants }} {{}} -->
+
+        <div class="z-50">
+          <v-autocomplete
+            label="Select Product"
+            item-title="product_name"
+            item-value="id"
+            :items="products"
+            v-model="selectedProductId"
+            variant="underlined"
+            class="z-50"
+            elevation="2"
+            style="position: relative; z-index: 3"
+          >
+            <template v-slot:chip="{ props, item }">
+              <v-chip v-bind="props" :text="item.raw.product_name"></v-chip>
+            </template>
+
+            <template v-slot:item="{ props, item }">
+              <v-list-item v-bind="props" :title="item?.raw?.product_name"></v-list-item>
+            </template>
+          </v-autocomplete>
+        </div>
+
+        <!-- <Select :ref="dropdown" v-model="selectedProductId">
+          <SelectTrigger>
+            <SelectValue placeholder="Select a product template" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Fruits</SelectLabel>
+              <SelectItem :value="`${item.id}`" v-for="(item, idx) in products" :key="idx">
+                {{ item.product_name }}
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select> -->
+        <!-- <div class="flex justify-around flex-wrap gap-x-4">
+          <div
+            v-for="(item, key) in products"
+            :key="key"
+            :class="`w-48p mb-4 cursor-pointer hover:bg-slate-100 rounded-md ${
+              selectedProducts.includes(item.name) ? 'selected bg-slate-200' : ''
+            }`"
+            @click="selectProduct(item)"
+          >
+            <div class="rounded-md bg-orange-300 h-32"></div>
+            <h3 class="font-medium mt-2 text-lg p-2">{{ item.name }}</h3>
+          </div>
+        </div> -->
+
+        <!-- <div class="flex justify-end">
+          <Button variant="outline" class="text-secondary">next</Button>
+        </div> -->
       </div>
+
+      <div>
+        <h2 class="font-bold text-lg my-6">Select specifications</h2>
+        <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
+
+        <div class="my-4" v-else>
+          <h2 class="font-bold my-2">{{ selectedProductName }}</h2>
+          <div
+            v-for="spec in Object.keys(selectedProductObject.specs)"
+            :key="spec"
+            class="flex justify-between"
+          >
+            <h4 class="font-medium">{{ spec }}</h4>
+            <div class="flex flex-row gap-2">
+              <div
+                class="no-wrap flex"
+                v-for="(value, idx) in selectedProductObject.specs[spec]"
+                :key="idx"
+              >
+                <input
+                  type="checkbox"
+                  :id="`${selectedProductName}-${value}-${idx}`"
+                  :name="`${selectedProductName}-${value}-${idx}`"
+                  :value="value"
+                  @change="(e) => handleSelectSpec(e, selectedProductName, spec, value)"
+                />
+                <label :for="`${selectedProductName}-${value}-${idx}`">
+                  <span class="ml-2">{{ value }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 
+      <div>
+        <h2 class="font-bold text-lg my-6">Select condition</h2>
+        <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
+
+        <div class="my-4" v-else>
+          <h2 class="font-bold my-2">{{ selectedProductName }}</h2>
+          <div class="justify-between">
+            <h4 class="font-medium">Condition</h4>
+            <div class="flex-row gap-2">
+              <div class="no-wrap flex" v-for="(value, idx) in Object.keys(conditions)" :key="idx">
+                <input
+                  type="radio"
+                  :id="value"
+                  name="condition"
+                  :value="conditions[value]"
+                  @change="
+                    (e) => handleSelectCondition(e, selectedProductName, spec, conditions[value])
+                  "
+                />
+                <label :for="value">
+                  <span class="ml-2">{{ value }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <div>
+        <h2 class="font-bold text-lg my-6">Select Price and quantity</h2>
+        <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
+
+        <p v-else-if="!Object.values(uniqueVariants).flat().length" class="text-center">
+          Please select a product specifications
+        </p>
+        <div v-else>
+          <div v-for="item in Object.keys(selectedProductSpecs)" :key="item">
+            <h4 class="font-bold my-4">{{ item }}</h4>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead class="w-[50px] px-0 text-center"> Variant Name </TableHead>
+                  <TableHead class="px-0 text-center">Qty</TableHead>
+                  <TableHead class="px-0 text-center">Price</TableHead>
+                  <TableHead class="px-0 text-center">Condition</TableHead>
+                  <TableHead class="text-right px-0 text-center"> </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow class="py-2" v-for="(variant, idx) in uniqueVariants[item]" :key="idx">
+                  <TableCell class="font-medium px-1">
+                    <p class="w-20">{{ variant }}</p>
+                  </TableCell>
+                  <TableCell class="px-1"
+                    ><Input
+                      type="number"
+                      :name="`${variant}-qty`"
+                      :id="`${variant}-qty`"
+                      class="w-12 px-1 text-center"
+                      @change="(e) => handleChange(e, variant, 'qty')"
+                  /></TableCell>
+                  <TableCell class="px-1"
+                    ><Input
+                      type="number"
+                      :name="`${variant}-price`"
+                      :id="`${variant}-price`"
+                      class="w-12 px-1 text-center"
+                      @change="(e) => handleChange(e, variant, 'price')"
+                  /></TableCell>
+                  <TableCell class="px-1">
+                    <Select v-if="variants[variant]" v-model="variants[variant].condition">
+                      <SelectTrigger class="w-[100px]">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <!-- <SelectLabel>Fruits</SelectLabel> -->
+                          <SelectItem
+                            :value="conditions[condition]"
+                            v-for="condition in Object.keys(conditions)"
+                            :key="condition"
+                          >
+                            {{ condition }}
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <p v-else>select price and qty first</p></TableCell
+                  >
+                  <TableCell class="text-right px-1">
+                    <Button variant="link" class="underline w-16 text-gray-400 p-0"
+                      ><TrashIcon class="w-6 h-6"
+                    /></Button>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+
+        <!-- <Collapsible>
+  <CollapsibleTrigger>Can I use this in my project?</CollapsibleTrigger>
+  <CollapsibleContent>
+    Yes. Free to use for personal and commercial projects. No attribution
+    required.
+  </CollapsibleContent>
+</Collapsible> -->
+
+        <!-- <Collapsible
+
+      className="w-[350px] space-y-2"
+    >
+      <div className="flex items-center justify-between space-x-4 px-4">
+        <h4 className="text-sm font-semibold">
+          @peduarte starred 3 repositories
+        </h4>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" size="sm" className="w-9 p-0">
+            <ChevronDownIcon className="h-4 w-4" />
+            <span className="sr-only">Toggle</span>
+          </Button>
+        </CollapsibleTrigger>
+      </div>
+      <div className="rounded-md border px-4 py-3 font-mono text-sm">
+        @radix-ui/primitives
+      </div>
+      <CollapsibleContent className="space-y-2">
+        <div className="rounded-md border px-4 py-3 font-mono text-sm">
+          @radix-ui/colors
+        </div>
+        <div className="rounded-md border px-4 py-3 font-mono text-sm">
+          @stitches/react
+        </div>
+      </CollapsibleContent>
+    </Collapsible> -->
+      </div>
+
+      <Button class="w-full mt-8" @click="handleSubmit">Create Product</Button>
     </div>
   </DrawerView>
 </template>

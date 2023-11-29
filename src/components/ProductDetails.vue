@@ -134,7 +134,7 @@ function saveProduct(e) {
       <div v-else class="product-body nav-margin-top">
         <h2 class="font-bold text-lg my-6">Product Details</h2>
 
-        <div class="img-wrapper">
+        <div class="img-wrapper bg-gray-200 my-2">
           <img :src="'https://api.leyyow.com' + product.product_image" alt="" />
         </div>
         <div class="product-detail-wrapper">

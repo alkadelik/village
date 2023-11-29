@@ -10,6 +10,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import AppLayout from '@/layouts/AppLayout.vue'
 import AddProductView from '@/components/AddProductView.vue'
+import AddProductFromTemplateView from '@/components/AddProductFromTemplateView.vue'
 import ProductDetails from '@/components/ProductDetails.vue'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -19,6 +20,10 @@ const appStore = useAppStore()
 const route = useRoute()
 
 const showAddProductView = () => {
+  appStore.drawerIsOpen = true
+  appStore.showAddProductView = true
+}
+const showAddProductFromTemplateView = () => {
   appStore.drawerIsOpen = true
   appStore.showAddProductView = true
 }
@@ -47,9 +52,12 @@ const handleProductClick = (product) => {
   <AppLayout
     class="relative p-4"
     pageTitle="Inventory"
-    stateKey="showAddProductView"
+    stateKey="showAddProductFromTemplateView"
+    stateKey2="showAddProductView"
+    stateKey3="showProductDetails"
     navBtnText="add Product"
     :hasNavBtn="true"
+    :hasMenu="true"
   >
     <div v-if="!authStore.state.inventory.length" class="h-full flex justify-center items-center">
       <div class="text-center w-8/12">
@@ -82,8 +90,9 @@ const handleProductClick = (product) => {
       </div>
     </div>
 
-    <AddProductView v-if="appStore.showAddProductView" />
-    <ProductDetails v-if="appStore.showProductDetails"  :product="productToEdit"/>
+    <AddProductFromTemplateView v-if="appStore.showAddProductFromTemplateView" stateKey="showAddProductFromTemplateView" />
+    <AddProductView v-if="appStore.showAddProductView"  stateKey="showAddProductView"  />
+    <ProductDetails v-if="appStore.showProductDetails" stateKey="showProductDetails"  :product="productToEdit"/>
   </AppLayout>
 </template>
 
