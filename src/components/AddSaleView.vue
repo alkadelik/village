@@ -231,7 +231,7 @@ const handleSave = () => {
       console.log(res.data.order, orderItems.value)
       authStore.state.orders = [...authStore.state.orders, res.data.order]
 
-      await     saveOrderItems(orderItems.value)
+      await saveOrderItems(orderItems.value)
         .then((res) => {
           console.log(res, 'res')
         })
@@ -242,7 +242,8 @@ const handleSave = () => {
 
     .finally(() => {
       $toast.success('Sale Created successfully')
-  
+      appStore.drawerIsOpen = false
+ 
       // appStore.drawerIsOpen = false
       // setTimeout(() => {
       //   appStore.showAddSaleView = false
@@ -269,14 +270,8 @@ const reset = () => {
 </script>
 
 <template>
-  <DrawerView
-    drawerTitle="Select products"
-    :step="activeStep"
-    :reduceStep="reduceStep"
-    stateKey="showNestedAddCustomerView"
-    :showAddCustomerButton="activeStep == 2"
-    @close="reset"
-  >
+  <DrawerView drawerTitle="Select products" :step="activeStep" :reduceStep="reduceStep"
+    stateKey="showNestedAddCustomerView" :showAddCustomerButton="activeStep == 2" @close="reset">
     <!-- {{authStore.state.inventory[4]}} -->
 
     <div v-show="activeStep == 0" class="px-4 h-full relative">
@@ -303,9 +298,7 @@ const reset = () => {
       </div>
 
       <div class="absolute bottom-36 left-0 w-full px-4">
-        <Button class="w-full" @click="goToCart" :disabled="!unpacked_cart.length"
-          >View Cart</Button
-        >
+        <Button class="w-full" @click="goToCart" :disabled="!unpacked_cart.length">View Cart</Button>
       </div>
     </div>
     <div v-show="activeStep == 1" class="px-4 h-screen relative overflow-y-scroll">
@@ -318,67 +311,64 @@ const reset = () => {
         </div>
         <div class="item_details">
           <p class="name">{{ item.product_name }}</p>
-          <div
-            class="price"
-            @click="editPrice(i)"
-            data-bs-toggle="modal"
-            data-bs-target="#editPrice"
-          >
+          <div class="price flex items-center" @click="editPrice(i)" data-bs-toggle="modal" data-bs-target="#editPrice">
             <h3>
               &#8358;{{ item.price }}<span>{{ item.new_price }}</span>
             </h3>
             <PencilSquareIcon class="w-4 h-4" />
           </div>
           <div>
-            <div class="flex justify-between my-3" v-if="item.first_variant && item.second_variant">
-              <Select v-model="item.selected_option1">
-                <SelectTrigger class="w-[100px]">
-                  <SelectValue :placeholder="`${item.first_variant_name}`" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem
-                      v-for="variant_option in item.first_variant.split(',')"
-                      :key="variant_option"
-                      :value="variant_option"
-                    >
-                      {{ variant_option }}
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+            <div class=" justify-">
+              <div class="flex justify-between my-3" v-if="item.first_variant && item.second_variant">
 
-              <Select v-model="item.selected_option2">
-                <SelectTrigger class="w-[100px]">
-                  <SelectValue :placeholder="`${item.second_variant_name}`" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem
-                      v-for="variant_option in item.second_variant.split(',')"
-                      :key="variant_option"
-                      :value="variant_option"
-                    >
-                      {{ variant_option }}
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                <Select v-model="item.selected_option1" class="p-0">
+                  <SelectTrigger class="w-20">
+                    <SelectValue :placeholder="`${item.first_variant_name}`" />
+                  </SelectTrigger>
+                  <!-- <span >{{ item.first_variant_name }}</span> -->
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem v-for="variant_option in item.first_variant.split(',')" :key="variant_option"
+                        :value="variant_option">
+                        {{ variant_option }}
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
+                <Select v-model="item.selected_option2">
+                  <!-- <span>{{ item.second_variant_name }}</span> -->
+
+                  <SelectTrigger class="w-20">
+                    <SelectValue :placeholder="`${item.second_variant_name}`" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem v-for="variant_option in item.second_variant.split(',')" :key="variant_option"
+                        :value="variant_option">
+                        {{ variant_option }}
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div class="counter">
+                <div class="counter-button" @click="decrease(i)">
+                  <MinusIcon class="w-4 h-4" />
+                </div>
+                <div class="0">
+                  <p>{{ sale.cart.find((cartItem) => cartItem.id == item.id).count }}</p>
+                </div>
+                <div class="counter-button" @click="increase(i)">
+                  <PlusIcon class="w-4 h-4" />
+                </div>
+              </div>
             </div>
+
 
             <!-- <span class="dark">{{ item.variant_1 }}, {{ item.variant_2 }}</span> -->
             <!-- <Variants :count="item.count" :id="item.id"></Variants> -->
-            <div class="counter">
-              <div class="counter-button" @click="decrease(i)">
-                <MinusIcon class="w-4 h-4" />
-              </div>
-              <div class="0">
-                <p>{{ sale.cart.find((cartItem) => cartItem.id == item.id).count }}</p>
-              </div>
-              <div class="counter-button" @click="increase(i)">
-                <PlusIcon class="w-4 h-4" />
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
@@ -394,12 +384,8 @@ const reset = () => {
       <div class="p-2">
         <Input class="w-full" placeholder="Type customer name to search" />
 
-        <div
-          class="select-customer-wrapper"
-          v-for="(customer, i) in authStore.state.customers"
-          :key="i"
-          @click="selectFunction(customer.id)"
-        >
+        <div class="select-customer-wrapper" v-for="(customer, i) in authStore.state.customers" :key="i"
+          @click="selectFunction(customer.id)">
           <div class="list_style_1 my-4" :class="{ active: sale.customer_id == customer.id }">
             <div style="display: flex">
               <div class="customer_img">
@@ -426,12 +412,8 @@ const reset = () => {
     <div v-show="activeStep == 3">
       <p class="text-center my-3">Checkout</p>
 
-      <CheckoutForm
-        :sale="sale"
-        @paymentStatus="paymentStatus"
-        @fulfillmentStatus="fulfillmentStatus"
-        @updateShipping="updateShipping"
-      />
+      <CheckoutForm :sale="sale" @paymentStatus="paymentStatus" @fulfillmentStatus="fulfillmentStatus"
+        @updateShipping="updateShipping" />
       <div class="absolute bottom-36 left-0 w-full px-4">
         <Button class="w-full" @click="handleSave">Save </Button>
       </div>
@@ -448,18 +430,22 @@ const reset = () => {
   justify-content: center;
   gap: 3px;
 }
+
 .product input {
   display: none;
 }
+
 label {
   position: relative;
   cursor: pointer;
   display: block;
 }
+
 .form label {
   color: #0c3e26;
   margin-bottom: 8px;
 }
+
 label::before {
   content: '';
   /* -webkit-appearance: none; */
@@ -477,7 +463,8 @@ label::before {
   right: 10px;
   top: 10px;
 }
-input:checked + label::after {
+
+input:checked+label::after {
   content: '';
   display: block;
   position: absolute;
@@ -493,23 +480,28 @@ input:checked + label::after {
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
+
 .form .form-group:nth-of-type(2n + 1) .sale-inventory-card {
   background: #cef6d4;
 }
+
 .form .form-group:nth-of-type(2n) .sale-inventory-card {
   background: #f9eeeb;
 }
+
 .form .form-group .sale-inventory-card {
   border-radius: 10px;
   padding: 12px;
   min-height: 143px;
   margin-bottom: 3px;
 }
+
 .img-wrapper {
   border-radius: 8px;
   overflow: hidden;
   height: 80px;
 }
+
 .sale-inventory-card .img-wrapper img {
   display: block;
   max-width: 80px;
@@ -518,9 +510,11 @@ input:checked + label::after {
   -o-object-fit: cover;
   object-fit: cover;
 }
+
 img {
   border-style: none;
 }
+
 .sale-inventory-card p {
   background: rgba(255, 255, 255, 0.5);
   -webkit-backdrop-filter: blur(304px);
@@ -547,9 +541,11 @@ img {
   grid-template-columns: 35% 60%;
   grid-gap: 15px;
 }
+
 .cart_item:not(:last-of-type) {
   margin-bottom: 11px;
 }
+
 .img_wrapper {
   /* display: flex; */
   /* align-items: center; */
@@ -563,36 +559,45 @@ img {
   border-radius: 20px;
   overflow: hidden;
 }
+
 .img_wrapper img {
   width: 100%;
 }
+
 .item_details {
   text-align: left;
 }
+
 .name,
 .price h3,
 .counter p {
   margin: 0;
 }
+
 .price {
   padding: 5px 0;
   cursor: pointer;
 }
+
 .price h3,
 .price img {
   display: inline-block;
 }
+
 .price h3 {
   margin-right: 5px;
 }
+
 .qty,
 .counter {
   display: flex;
   flex-direction: row;
 }
+
 .qty {
   justify-content: space-between;
 }
+
 .counter {
   align-items: center;
   justify-content: space-around;
@@ -601,9 +606,11 @@ img {
   background: #f8f8f8;
   border-radius: 4px;
 }
+
 .counter img {
   vertical-align: middle;
 }
+
 .number {
   background: #e9e9e9;
   border-radius: 4px;
@@ -619,30 +626,36 @@ img {
 .select-customer-wrapper {
   cursor: pointer;
 }
+
 .list_style_1 {
   /* display: flex; */
   /* flex-direction: row; */
   padding: 15px;
   margin-bottom: 15px;
-  border: 1px solid #4caf50; /* active */
+  border: 1px solid #4caf50;
+  /* active */
   border: 1px solid #e2e8f0;
   border-radius: 8px;
 }
+
 .customer_details,
 .all-products {
   /* padding-left: 15px; */
   text-align: left;
 }
+
 h3 {
   margin: 7px 0 0 10px;
   font-size: 20px;
   font-weight: bold;
   color: #445b54;
 }
+
 .customer_details p {
   margin: 0;
   padding: 2px 0;
 }
+
 .active {
   border: 1px solid #4caf50;
 }

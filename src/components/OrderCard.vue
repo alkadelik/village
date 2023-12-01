@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { ChevronDownIcon } from '@heroicons/vue/24/outline'
+
 import { computed, onMounted, ref } from 'vue'
 import { fetchOrderItems } from '@/services/apiServices'
 import OrderItems from '@/components/OrderItems.vue'
@@ -58,15 +60,12 @@ const ordinal_suffix = computed(() => {
   }
   return 'th'
 })
-onMounted(() => {})
+onMounted(() => { })
 </script>
 
 <template>
   <Collapsible v-if="order">
-    <div
-      class="border border-slate p-4 rounded-md my-2"
-      @click.once="getOrderItems(order.order_ref)"
-    >
+    <div class="border border-slate p-4 rounded-md my-2" @click.once="getOrderItems(order.order_ref)">
       <CollapsibleTrigger v-if="customer" class="w-full">
         <div class="flex justify-between">
           <div class="order-customer">
@@ -86,8 +85,8 @@ onMounted(() => {})
                   ? '' :ordinal_suffix }} -->
               {{
                 order_date == 'Today' || order_date == 'Yesterday'
-                  ? ''
-                  : parseInt(order.created.substring(0, 4))
+                ? ''
+                : parseInt(order.created.substring(0, 4))
               }}
             </p>
           </div>
@@ -98,27 +97,33 @@ onMounted(() => {})
             {{ order.unique_items }} items
             <!-- {{ order.unique_items > 1 ? `& ${order.unique_items - 1} other items` : "" }} -->
           </p>
-          <p class="pending text-primary">{{ order.fulfilled == 1 ? 'Fulfilled' : 'Pending' }}</p>
+          <p v-if="order.fulfilled == 1 " class="pending text-primary">Fullfiled</p>
+          <p v-else class="pending text-error">Pending</p>
         </div>
-        <div class="bg-gray-100 bg-opacity-30 p-4 rounded-md my-4">
-          <div class="flex justify-between w-full py-2">
+
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div class="bg-gray-100 bg-opacity-30 p-4 my-2 rounded-md w-full">
+
+          <div class="flex justify-between w-full ">
             <h4 class="font-bold">Products</h4>
             <div class="flex items-center gap-2">
-              <span  class="text-sm underline">Check All</span>
+              <span class="text-sm underline">Check All</span>
               <!-- <input type="checkbox" name="mark-all" id="mark-all" /> -->
             </div>
           </div>
           <OrderItems v-for="(item, i) in [1, 2, 3]" :key="i" :item="item"></OrderItems>
-        </div>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <div class="bg-slate-100 p-4 my-2 rounded-md">
-          <div class="w-full font-medium mb-2">Products</div>
-          <ul class="text-sm mb-4">
-            <li v-for="(item, idx) in order_items" :key="idx">{{ item.product_name }}</li>
-          </ul>
+
           <Collapsible>
-            <CollapsibleTrigger><div class="w-full">Customer Details</div></CollapsibleTrigger>
+            <div class="w-full flex justify-between bg-slate-200 bg-opacity-30 rounded-md p-2">
+              <div class="w-full rounded-md p-2">Customer Details </div>
+              <CollapsibleTrigger>
+                <div class="w-full rounded-md p-2">
+                  <ChevronDownIcon class="w-4 h-4" />
+                  </div>
+              </CollapsibleTrigger>
+
+            </div>
             <CollapsibleContent>
               <div :id="'customer' + customer.id" class="mt-4">
                 <ul class="customer-details">
@@ -157,6 +162,7 @@ onMounted(() => {})
   display: flex;
   flex-direction: column;
 }
+
 /* .order-details div { */
 .order-details div {
   display: flex;
@@ -164,11 +170,13 @@ onMounted(() => {})
   width: 300px;
   color: #445b54;
 }
+
 h3 {
   margin: 0;
   font-size: 18px;
   font-weight: bold;
 }
+
 .ellipses {
   display: inline-block;
   white-space: nowrap;
@@ -179,12 +187,15 @@ h3 {
   text-align: left;
   margin-right: 5px;
 }
+
 .date p {
   margin-bottom: 10px;
 }
+
 .date ul {
   padding: 0;
 }
+
 .order-items {
   /* border: 1px solid pink; */
   background: #f4f4f4;
@@ -192,10 +203,12 @@ h3 {
   margin: 15px;
   padding: 10px;
 }
+
 .item-header {
   display: flex;
   justify-content: space-between;
 }
+
 .call {
   font-size: 18px;
   font-weight: lighter;
@@ -204,6 +217,7 @@ h3 {
   background: #f4fff4;
   border-radius: 42px;
 }
+
 .customer-details {
   background: #fff;
   border: 0.5px solid grey;
@@ -212,48 +226,58 @@ h3 {
   /* padding: 0; */
   text-align: left;
 }
+
 .customer-details li {
   display: flex;
   padding-bottom: 10px;
 }
+
 .customer-details p {
   margin: 0;
   padding-left: 10px;
 }
+
 .customer-details button {
   padding: 10px;
   width: 100%;
   border-radius: 8px;
   border: none;
 }
+
 #fulfillment p {
   margin: 0;
 }
+
 #fulfillment {
   display: flex;
   justify-content: space-between;
 }
+
 .accordion-button {
   padding: 15px;
 }
+
 .accordion-button:not(.collapsed) {
   background-color: none;
   color: #445b54;
 }
+
 .accordion-button:not(.collapsed)::after,
 .accordion-button::after {
   /* background-image: var(--bs-accordion-btn-active-icon); */
   background-image: none;
 }
+
 .accordion-header {
   /* background-color: none; */
 }
+
 .accordion-button:focus {
   box-shadow: none;
   border-color: rgba(0, 0, 0, 0.125);
 }
+
 .accordion {
   margin-bottom: 15px;
   --bs-accordion-active-bg: none;
-}
-</style>
+}</style>

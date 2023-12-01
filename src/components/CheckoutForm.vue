@@ -10,7 +10,7 @@ const props = defineProps(['sale'])
   <div class="form nav-margin-top py-6 px-4">
     <div class="form-group">
       <label for="your-email">Enter deliver fee if any</label>
-      {{sale.shipping}}
+    
       <Input :modelValue="sale.shipping" :handleChange="e => $emit('updateShipping', e)" class="my-2" />
     </div>
 

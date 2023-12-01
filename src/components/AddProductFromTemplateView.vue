@@ -413,17 +413,9 @@ const dropdown = ref()
         <!-- {{ variants }} {{}} -->
 
         <div class="z-50">
-          <v-autocomplete
-            label="Select Product"
-            item-title="product_name"
-            item-value="id"
-            :items="products"
-            v-model="selectedProductId"
-            variant="underlined"
-            class="z-50"
-            elevation="2"
-            style="position: relative; z-index: 3"
-          >
+          <v-autocomplete label="Select Product" item-title="product_name" item-value="id" :items="products"
+            v-model="selectedProductId" variant="underlined" class="z-50" elevation="2"
+            style="position: relative; z-index: 3">
             <template v-slot:chip="{ props, item }">
               <v-chip v-bind="props" :text="item.raw.product_name"></v-chip>
             </template>
@@ -472,25 +464,13 @@ const dropdown = ref()
 
         <div class="my-4" v-else>
           <h2 class="font-bold my-2">{{ selectedProductName }}</h2>
-          <div
-            v-for="spec in Object.keys(selectedProductObject.specs)"
-            :key="spec"
-            class="flex justify-between"
-          >
+          <div v-for="spec in Object.keys(selectedProductObject.specs)" :key="spec" class="flex justify-between">
             <h4 class="font-medium">{{ spec }}</h4>
             <div class="flex flex-row gap-2">
-              <div
-                class="no-wrap flex"
-                v-for="(value, idx) in selectedProductObject.specs[spec]"
-                :key="idx"
-              >
-                <input
-                  type="checkbox"
-                  :id="`${selectedProductName}-${value}-${idx}`"
-                  :name="`${selectedProductName}-${value}-${idx}`"
-                  :value="value"
-                  @change="(e) => handleSelectSpec(e, selectedProductName, spec, value)"
-                />
+              <div class="no-wrap flex" v-for="(value, idx) in selectedProductObject.specs[spec]" :key="idx">
+                <input type="checkbox" :id="`${selectedProductName}-${value}-${idx}`"
+                  :name="`${selectedProductName}-${value}-${idx}`" :value="value"
+                  @change="(e) => handleSelectSpec(e, selectedProductName, spec, value)" />
                 <label :for="`${selectedProductName}-${value}-${idx}`">
                   <span class="ml-2">{{ value }}</span>
                 </label>
@@ -551,48 +531,33 @@ const dropdown = ref()
               <TableBody>
                 <TableRow class="py-2" v-for="(variant, idx) in uniqueVariants[item]" :key="idx">
                   <TableCell class="font-medium px-1">
-                    <p class="w-20">{{ variant }}</p>
+                    <p class="w-20  variant-key">{{ variant.split('/').join(' / ') }}</p>
                   </TableCell>
-                  <TableCell class="px-1"
-                    ><Input
-                      type="number"
-                      :name="`${variant}-qty`"
-                      :id="`${variant}-qty`"
-                      class="w-12 px-1 text-center"
-                      @change="(e) => handleChange(e, variant, 'qty')"
-                  /></TableCell>
-                  <TableCell class="px-1"
-                    ><Input
-                      type="number"
-                      :name="`${variant}-price`"
-                      :id="`${variant}-price`"
-                      class="w-12 px-1 text-center"
-                      @change="(e) => handleChange(e, variant, 'price')"
-                  /></TableCell>
+                  <TableCell class="px-1"><Input type="number" :name="`${variant}-qty`" :id="`${variant}-qty`"
+                      class="w-12 px-1 text-center" @change="(e) => handleChange(e, variant, 'qty')" /></TableCell>
+                  <TableCell class="px-1"><Input type="number" :name="`${variant}-price`" :id="`${variant}-price`"
+                      class="w-20 px-1 text-center" @change="(e) => handleChange(e, variant, 'price')" /></TableCell>
                   <TableCell class="px-1">
                     <Select v-if="variants[variant]" v-model="variants[variant].condition">
-                      <SelectTrigger class="w-[100px]">
+                      <SelectTrigger class="">
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
                           <!-- <SelectLabel>Fruits</SelectLabel> -->
-                          <SelectItem
-                            :value="conditions[condition]"
-                            v-for="condition in Object.keys(conditions)"
-                            :key="condition"
-                          >
+                          <SelectItem :value="conditions[condition]" v-for="condition in Object.keys(conditions)"
+                            :key="condition">
                             {{ condition }}
                           </SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <p v-else>select price and qty first</p></TableCell
-                  >
+                    <p v-else class="w-20">select price and qty first</p>
+                  </TableCell>
                   <TableCell class="text-right px-1">
-                    <Button variant="link" class="underline w-16 text-gray-400 p-0"
-                      ><TrashIcon class="w-6 h-6"
-                    /></Button>
+                    <Button variant="link" class="underline w-8 text-gray-400 p-0">
+                      <TrashIcon class="w-6 h-6" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -643,6 +608,9 @@ const dropdown = ref()
 </template>
 
 <style scoped>
-.selected {
+.selected {}
+
+.variant-key {
+  overflow-wrap: break-word
 }
 </style>
