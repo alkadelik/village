@@ -30,27 +30,17 @@ const customers = ref(authStore.state?.customers)
 
 const computedOrdersWithCustomer = computed(() => {
   console.log(authStore.state.orders, customers.value)
-  let res = authStore.state.orders
+  let res = authStore.state.orders.filter(order => customers.value.find(customer => customer.id == order.customer))
 
   return res
 })
 </script>
 
 <template>
-  <AppLayout
-    class="relative p-4"
-    pageTitle="Sales"
-    stateKey="showAddSaleView"
-    navBtnText="add Sale"
-    :hasNavBtn="true"
-  >
+  <AppLayout class="relative p-4" pageTitle="Sales" stateKey="showAddSaleView" navBtnText="add Sale" :hasNavBtn="true">
     <div v-if="!computedOrdersWithCustomer?.length" class="flex justify-center items-center h-full">
       <div class="text-center w-8/12">
-        <img
-          src="../assets/images/product-skeleton.png"
-          class="w-32 mx-auto"
-          alt="product skeleton icon"
-        />
+        <img src="../assets/images/product-skeleton.png" class="w-32 mx-auto" alt="product skeleton icon" />
         <h3 class="text-xl font-bold">No Sales Added</h3>
         <p class="font-light my-3">Add sales to your store so you can take orders easily.</p>
         <Button class="my-4 w-10/12" size="lg" @click="showAddProductView">Add Sale</Button>
@@ -60,10 +50,11 @@ const computedOrdersWithCustomer = computed(() => {
     <div v-else class="h-screen overflow-y-scroll pb-56">
       <div v-for="(item, i) in computedOrdersWithCustomer" :key="item.key">
         <!-- .find(customer => customer.id === item.customer ) -->
-        <OrderCard :customer="customers[0]" :order="item" :index="i" />
+        <OrderCard :customer="customers.find(customer => customer.id === item.customer)" :order="item"
+          :index="i" />
       </div>
     </div>
 
-    <AddSaleView v-if="appStore.showAddSaleView"  />
+    <AddSaleView v-if="appStore.showAddSaleView" />
   </AppLayout>
 </template>

@@ -152,10 +152,17 @@ const products = computed(() => {
 
     obj.product_name = item.product_name
     obj.id = item.id
-    obj.specs = {
-      [item.first_variant_name]: item.first_variant.split(','),
-      [item.second_variant_name]: item.second_variant.split(',')
+    if (item.first_variant_name) {
+      obj.specs = { ...obj.specs, ...{ [item.first_variant_name]: item.first_variant.split(',').filter(item => item !== '') } }
     }
+    if (item.second_variant_name) {
+      obj.specs = { ...obj.specs, ...{ [item.second_variant_name]: item.second_variant.split(',').filter(item => item !== '') } }
+
+    }
+    // obj.specs = {
+    //   [item.first_variant_name]: item.first_variant.split(',').filter(item => item !== ''),
+    //   [item.second_variant_name]: item.second_variant.split(',').filter(item => item !== '')
+    // }
     res.push(obj)
   })
 
@@ -353,15 +360,15 @@ const handleSubmit = () => {
   inventoryItem.product_name = selectedProductName.value
   inventoryItem.has_variant = true
   inventoryItem.first_variant_name = specs[0]
-  inventoryItem.second_variant_name = specs[1]
-  inventoryItem.first_variant = selectedProductObject.value.specs[specs[0]].join(',')
-  inventoryItem.second_variant = selectedProductObject.value.specs[specs[1]].join(',')
+  inventoryItem.second_variant_name = specs[1] || ''
+  inventoryItem.first_variant = selectedProductObject.value.specs[specs[0]]?.join(',') || ''
+  inventoryItem.second_variant = selectedProductObject.value.specs[specs[1]]?.join(',') || ''
   inventoryItem.slug = authStore.state.store.slug
   inventoryItem.store = authStore.state.store.store_name
   inventoryItem.variant_options = stringifiedVariants.value
   inventoryItem.template_id = selectedProductObject.value.id
   inventoryItem.from_template = true
-  // inventoryItem.condition = selectedCondition.value
+  inventoryItem.condition = 'new'
   // inventoryItem.product_image = "/media/static/images/default_product.png"
   // inventoryItem.category = "gadgets"
   // compute variants
@@ -374,10 +381,12 @@ const handleSubmit = () => {
 
 const createNewProduct = (new_product) => {
   // creates new product with the image only
+  console.log(new_product)
   createProduct(new_product)
     .then((res) => {
       $toast.success('product added successfully')
       authStore.state.inventory.push(res.data)
+      close()
       // this.new_product.id = res.data.id
       // this.new_product.temp_id = res.data.id; // when creating multiple products at a time
     })
@@ -458,13 +467,12 @@ const dropdown = ref()
         </div> -->
       </div>
 
-      <div>
+      <div v-if="selectedProductObject.specs">
         <h2 class="font-bold text-lg my-6">Select specifications</h2>
         <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
-
         <div class="my-4" v-else>
           <h2 class="font-bold my-2">{{ selectedProductName }}</h2>
-          <div v-for="spec in Object.keys(selectedProductObject.specs)" :key="spec" class="flex justify-between">
+          <div v-for="spec in Object.keys(selectedProductObject.specs || {})" :key="spec" class="flex justify-between">
             <h4 class="font-medium">{{ spec }}</h4>
             <div class="flex flex-row gap-2">
               <div class="no-wrap flex" v-for="(value, idx) in selectedProductObject.specs[spec]" :key="idx">
@@ -510,7 +518,7 @@ const dropdown = ref()
 
       <div>
         <h2 class="font-bold text-lg my-6">Select Price and quantity</h2>
-        <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
+        <p v-if="!selectedProductName " class="text-center">Please select a product template</p>
 
         <p v-else-if="!Object.values(uniqueVariants).flat().length" class="text-center">
           Please select a product specifications

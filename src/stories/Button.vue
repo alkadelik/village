@@ -1,13 +1,6 @@
 <template>
-  <Button
-    type="button"
-    :variant="variant"
-    :size="size"
-    :backgroundColor="primary"
-    :class="classes"
-    @click="onClick"
-    :style="style"
-  >
+  <Button type="button" :variant="variant" :size="size" :backgroundColor="primary" :class="classes" @click="onClick"
+    :style="style">
     <Icon v-if="loading" icon="svg-spinners:180-ring" /> <span v-else>{{ !loading && label }}</span>
   </Button>
 </template>
@@ -45,7 +38,11 @@ const props = withDefaults(
     /**
      * click handler of the button
      */
-    onClick?: {action: string}
+    onClick?: { action: string }
+    /**
+     * click handler of the button
+     */
+    class?: string
   }>(),
   { variant: 'default' }
 )
@@ -54,12 +51,15 @@ const emit = defineEmits<{
   (e: 'click', id: number): void
 }>()
 
-const classes = computed(() => ({
-  'w-full': true,
-  //   'storybook-button--primary': props.primary,
-  //   'storybook-button--secondary': !props.primary,
-  [`bg-${props.backgroundColor || 'primary'}`]: true
-}))
+const classes = computed(function () {
+  return ({
+    'w-full': true,
+    //   'storybook-button--primary': props.primary,
+    //   'storybook-button--secondary': !props.primary,
+    [`bg-${props.backgroundColor || 'primary'}`]: true,
+    [`${this.class}`]: true
+  })
+})
 
 const style = computed(() => ({
   backgroundColor: props.backgroundColor

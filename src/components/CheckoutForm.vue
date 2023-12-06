@@ -28,7 +28,7 @@ const props = defineProps(['sale'])
     </div> -->
 
     <div class="payment-status">
-      <p class="dark label my-2">Has this order been pad for?</p>
+      <p class="dark label my-2">Has this order been paid for?</p>
       <div class="form-group">
         <input
           id="paid"

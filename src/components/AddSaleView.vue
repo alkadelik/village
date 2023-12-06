@@ -51,7 +51,7 @@ const createOrderID = () => {
   var rand_int = Math.floor(Math.random() * 9999) + 1000
   const today = new Date()
   var year = today.getFullYear().toString().slice(-2)
-  var store_id = authStore.state.account_id.toString() // this allows for up to 9999 stores merchants
+  var store_id = authStore.state.store.id.toString() // this allows for up to 9999 stores merchants
   // var customer_id = '0000' // 0 for anonymous
   var month = (today.getMonth() + 1).toString() // cause month is 0 indexed
   var day = today.getDate().toString()

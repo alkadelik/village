@@ -110,6 +110,9 @@ console.log(res.data)
   function logout() {
     state.value.loggedIn = false
     localStorage.removeItem('leyyow_token')
+    localStorage.removeItem('leyyow')
+    axios.defaults.headers.common['Authorization'] = ``
+
     // maybe reset state?
 
     router.push('/login')

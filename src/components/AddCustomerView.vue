@@ -31,7 +31,7 @@ const $toast = useToast()
 const formSchema = toTypedSchema(
   z.object({
     first_name: z.string(),
-    last_name: z.string(),
+    last_name: z.string().optional(),
     address: z.string(),
     city: z.string(),
     phone: z.number(),
@@ -45,7 +45,7 @@ const form = useForm({
 const onSubmit = form.handleSubmit((values) => {
   //console.log('Form submitted!', values)
 
-  saveCustomer({ ...values, line1: '' })
+  saveCustomer({ line1: '', last_name: '', ...values, })
     .then((res) => {
       // this.new_customer_id = res.data.customer.id
       authStore.state.customers.push(res.data.customer)
@@ -69,12 +69,10 @@ const onSubmit = form.handleSubmit((values) => {
         <div class="flex gap-2">
           <FormField v-slot="{ componentField }" name="first_name">
             <FormItem>
-              <FormLabel
-                ><span class="text-secondary text-base font-light">First Name</span></FormLabel
-              >
+              <FormLabel><span class="text-secondary text-base font-light">First Name</span></FormLabel>
               <FormControl>
                 <Input id="username" type="text" class="mt-3 mb-4" v-bind="componentField">
-                  <!-- <EnvelopeIcon class="icon w-6 h-6 absolute top-2 left-2" /> -->
+                <!-- <EnvelopeIcon class="icon w-6 h-6 absolute top-2 left-2" /> -->
                 </Input>
               </FormControl>
               <FormMessage />
@@ -82,12 +80,10 @@ const onSubmit = form.handleSubmit((values) => {
           </FormField>
           <FormField v-slot="{ componentField }" name="last_name">
             <FormItem>
-              <FormLabel
-                ><span class="text-secondary text-base font-light">Last Name</span></FormLabel
-              >
+              <FormLabel><span class="text-secondary text-base font-light">Last Name</span></FormLabel>
               <FormControl>
                 <Input id="username" type="text" class="mt-3 mb-4" v-bind="componentField">
-                  <!-- <EnvelopeIcon class="icon w-6 h-6 absolute top-2 left-2" /> -->
+                <!-- <EnvelopeIcon class="icon w-6 h-6 absolute top-2 left-2" /> -->
                 </Input>
               </FormControl>
               <FormMessage />
@@ -96,12 +92,10 @@ const onSubmit = form.handleSubmit((values) => {
         </div>
         <FormField v-slot="{ componentField }" name="email">
           <FormItem>
-            <FormLabel
-              ><span class="text-secondary text-base font-light">Email Address</span></FormLabel
-            >
+            <FormLabel><span class="text-secondary text-base font-light">Email Address</span></FormLabel>
             <FormControl>
               <Input id="email" type="email" class="mt-3 mb-4" v-bind="componentField">
-                <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
+              <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
               /> -->
               </Input>
             </FormControl>
@@ -113,7 +107,7 @@ const onSubmit = form.handleSubmit((values) => {
             <FormLabel><span class="text-secondary text-base font-light">address</span></FormLabel>
             <FormControl>
               <Input id="address" type="text" class="mt-3 mb-4" v-bind="componentField">
-                <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
+              <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
               /> -->
               </Input>
             </FormControl>
@@ -125,7 +119,7 @@ const onSubmit = form.handleSubmit((values) => {
             <FormLabel><span class="text-secondary text-base font-light">city</span></FormLabel>
             <FormControl>
               <Input id="address" type="text" class="mt-3 mb-4" v-bind="componentField">
-                <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
+              <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
               /> -->
               </Input>
             </FormControl>
@@ -137,7 +131,7 @@ const onSubmit = form.handleSubmit((values) => {
             <FormLabel><span class="text-secondary text-base font-light">Phone</span></FormLabel>
             <FormControl>
               <Input id="phone" type="number" class="mt-3 mb-4" v-bind="componentField">
-                <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
+              <!-- <LockClosedIcon class="icon w-6 h-6 absolute top-2 left-2"
               /> -->
               </Input>
             </FormControl>
