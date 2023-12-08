@@ -3,6 +3,7 @@ import { ref, computed, watch, reactive, onMounted } from 'vue'
 import { useToast } from 'vue-toast-notification'
 
 import DrawerView from '@/components/DrawerView.vue'
+import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ChevronDownIcon, TrashIcon } from '@heroicons/vue/24/outline'
@@ -94,36 +95,7 @@ onMounted(() => {
   //  })
 })
 
-// const products = [
-//   {
-//     name: 'iphone 15',
-//     specs: {
-//       color: ['black', 'silver', 'grey'],
-//       capacity: ['128GB', '256GB', '512GB', '1TB']
-//     }
-//   },
-//   {
-//     name: 'iphone 15 pro',
-//     specs: {
-//       color: ['black', 'silver', 'grey'],
-//       capacity: ['128GB', '256GB', '512GB', '1TB']
-//     }
-//   },
-//   {
-//     name: 'iphone 15 pro max',
-//     specs: {
-//       color: ['black', 'silver', 'grey'],
-//       capacity: ['128GB', '256GB', '512GB', '1TB']
-//     }
-//   },
-//   {
-//     name: 'iphone 15 plus',
-//     specs: {
-//       color: ['black', 'silver', 'grey'],
-//       capacity: ['128GB', '256GB', '512GB', '1TB']
-//     }
-//   }
-// ]
+
 
 const conditions = ref({
   New: 'NW',
@@ -398,6 +370,30 @@ const close = () => {
     appStore.showAddProductView = false
   }, 500)
 }
+
+
+
+//
+const imageData = ref('')
+const new_product = ref({
+  product_name: '',
+  price: '',
+  description: '',
+})
+
+const saveProduct = (e) => {
+  // let new_product = new FormData()
+  // try {
+  //   new_product.append("product_image", e.target.files[0])
+  //   // this.uploading_image = true
+  // } catch { null }
+
+  // if (!this.product_to_edit.id) {
+  //   this.new_product.id ? this.editProduct(this.new_product, this.new_product.id) : this.createNewProduct(new_product)
+  // } else {
+  //   this.editProduct(this.edit_product, this.product_to_edit.id)
+  // }
+}
 </script>
 
 <template>
@@ -406,13 +402,83 @@ const close = () => {
       <!-- <Input placeholder="Search templates" /> -->
 
       <div class="my-6">
-        <h2 class="font-bold text-lg my-6">Select Product normally</h2>
+        <h2 class="font-bold text-lg my-6">Add product</h2>
+
+        <div class="product-body">
+          <div class="form">
+            <div class="form-group">
+              <p class="dark label">Edit Product image</p>
+              <!-- <input class="" type="file" id="editUploadProductImage" name="editUploadProductImage"
+                    @change="previewImage" accept="image/*" /> -->
+              <label for="editUploadProductImage" class="uploadProductImage ">Tap here to change product image</label>
+              <div class="image-preview" v-if="imageData.length > 0">
+                <img class="preview" :src="imageData" alt="preview" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="edit-product-name">Product Name</label>
+              <Input type="text" id="edit-product-name" class="form-control" v-model="new_product.product_name" />
+            </div>
+            <div class="form-group">
+              <label for="edit-product-price">Product Price</label>
+              <Input type="text" id="edit-product-price" v-model="new_product.price" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label for="product-description">Product Description <span>(Optional)</span></label>
+              <Textarea id="product-description" class="form-control" v-model="new_product.description"></Textarea>
+            </div>
+            <div class="flex justify-between">
+
+              <!-- <Button variant="outline" class="btn-style " @click="editProduct(new_product, product.id)">
+                    Save 
+                  </Button> -->
+              <Button class="w-full mt-8" @click="editProduct(new_product, product.id)">Create Product</Button>
+
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </DrawerView>
 </template>
 
 <style scoped>
-.selected {
+.image-preview {
+  width: 330px;
 }
-</style>
+
+img {
+  width: 100%;
+}
+
+.form {
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form label {
+  color: #0C3E26;
+  margin-bottom: 8px;
+}
+
+.form label.uploadProductImage {
+  background: #FDFDFD;
+  border: 0.5px dashed rgba(20, 62, 50, 0.25);
+  border-radius: 8px;
+  padding: 35px 50px;
+  width: 100%;
+  color: #69747E;
+  text-align: center;
+}
+
+.form input[type="file"] {
+  display: none;
+}
+
+p,
+.p {
+  color: #9C9C9C;
+}</style>

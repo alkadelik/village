@@ -51,11 +51,13 @@ console.log(res.data)
         $toast.error(e.response.data.non_field_errors[0])
       })
       .finally(() => {
-        if (hasProducts) {
-          router.push('/dashboard')
-        } else {
-          router.push('/inventory?addProduct=true')
-        }
+        router.push('/dashboard')
+
+        // if (hasProducts) {
+        //   router.push('/dashboard')
+        // } else {
+        //   router.push('/inventory?addProduct=true')
+        // }
         state.value.loading = false
       })
 
@@ -96,8 +98,8 @@ console.log(res.data)
           state.value.inventory = []
           state.value.productTemplates = []
           state.value.store = res.data.store
-
-          router.push('/inventory?addProduct=true')
+          // ?addProduct=true'
+          router.push('/inventory')
         })
       })
       .catch(() => {

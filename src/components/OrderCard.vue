@@ -97,7 +97,7 @@ onMounted(() => { })
             {{ order.unique_items }} items
             <!-- {{ order.unique_items > 1 ? `& ${order.unique_items - 1} other items` : "" }} -->
           </p>
-          <p v-if="order.fulfilled == 1 " class="pending text-primary">Fullfiled</p>
+          <p v-if="order.status == 1 " class="pending text-primary">Fullfiled</p>
           <p v-else class="pending text-error">Pending</p>
         </div>
 
@@ -112,7 +112,7 @@ onMounted(() => { })
               <!-- <input type="checkbox" name="mark-all" id="mark-all" /> -->
             </div>
           </div>
-          <OrderItems v-for="(item, i) in [1, 2, 3]" :key="i" :item="item"></OrderItems>
+          <OrderItems v-for="(item, i) in order_items" :key="i" :item="item"></OrderItems>
 
           <Collapsible>
             <div class="w-full flex justify-between bg-slate-200 bg-opacity-30 rounded-md p-2">

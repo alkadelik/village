@@ -467,7 +467,7 @@ const dropdown = ref()
         </div> -->
       </div>
 
-      <div v-if="selectedProductObject.specs">
+      <div v-if="selectedProductObject?.specs">
         <h2 class="font-bold text-lg my-6">Select specifications</h2>
         <p v-if="!selectedProductName" class="text-center">Please select a product template</p>
         <div class="my-4" v-else>

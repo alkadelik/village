@@ -183,7 +183,7 @@ const selectFunction = (id) => {
 }
 
 const fulfillmentStatus = (e) => {
-  sale.value.fulfilled = e.target.value
+  sale.value.fulfilled = e.target.value                    
 }
 const paymentStatus = (e) => {
   console.log(e.target.value)
@@ -208,6 +208,7 @@ const orderItems = computed(() => {
     order_item.productid = item.id
     order_item.image_url = item.product_image
     order_item.has_feedback = item.has_feedback
+    order_item.status = sale.value.fulfilled
     return order_item
   })
 })

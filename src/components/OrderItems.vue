@@ -2,22 +2,22 @@
   <div class="flex justify-between my-4" :class="{ active: manageOrder }">
     <div class="flex items-center gap-2">
       <div class=" w-12 h-12 bg-white rounded-md" v-if="!item.product_image">
-        <!-- <img :src="baseUrl + item.product_image" alt="product_image" /> -->
+        <img v-if="!item.image_url" :src="baseUrl + item.image_url" alt="product_image" />
       </div>
 
       <div class="name">
-        <p class="font-bold text-sm">{{ item.product_name }}Unisex shoe</p>
-        <p class="text-left text-sm">Qty: {{ item.qty }}90</p>
+        <p class="font-bold text-sm">{{ item.product_name }}</p>
+        <p class="text-left text-sm">Qty: {{ item.qty }}</p>
       </div>
     </div>
     <div class="price">
       <div class="product-price">
     
-        <p class="text-sm font-bold text-right">&#8358;{{ item.sub_total }} 3000</p>
+        <p class="text-sm font-bold text-right">&#8358;{{ item.price_sold }}</p>
 
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 ">
           <label for="mark-all">fulfilled</label>
-          <input type="checkbox" name="mark-all" id="mark-all" />
+          <input type="checkbox" name="mark-all" id="mark-all"  :checked="item.status" :disabled="item.status" />
         </div>
       </div>
     </div>
