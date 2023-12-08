@@ -2,6 +2,8 @@
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '../stores/auth'
 import { useAppStore } from '../stores/app'
+import { fethcStoreInventory } from '@/services/apiServices'
+
 import {
   ChartPieIcon,
   BookmarkIcon,
@@ -34,6 +36,11 @@ const showProductDetails = () => {
 }
 
 onMounted(() => {
+  fethcStoreInventory(authStore.state.store.slug).then((res) => {
+    console.log(res.data, ' f')
+    // authStore.state.orders = res.data
+    // authStore.state.has_sale = authStore.state.orders.length > 0
+  })
   console.log(route.query)
   if (route.query.addProduct) {
     showAddProductView()
@@ -49,50 +56,40 @@ const handleProductClick = (product) => {
 </script>
 
 <template>
-  <AppLayout
-    class="relative p-4"
-    pageTitle="Inventory"
-    stateKey="showAddProductFromTemplateView"
-    stateKey2="showAddProductView"
-    stateKey3="showProductDetails"
-    navBtnText="add Product"
-    :hasNavBtn="true"
-    :hasMenu="true"
-  >
+  <AppLayout class="relative p-4" pageTitle="Inventory" stateKey="showAddProductFromTemplateView"
+    stateKey2="showAddProductView" stateKey3="showProductDetails" navBtnText="add Product" :hasNavBtn="true"
+    :hasMenu="true">
     <div v-if="!authStore.state.inventory.length" class="h-full flex justify-center items-center">
       <div class="text-center w-8/12">
-        <img
-          src="../assets/images/product-skeleton.png"
-          class="w-32 mx-auto"
-          alt="product skeleton icon"
-        />
+        <img src="../assets/images/product-skeleton.png" class="w-32 mx-auto" alt="product skeleton icon" />
         <h3 class="text-xl font-bold">No Products Added</h3>
         <p class="font-light my-3">Add products to your store so you can take orders easily.</p>
         <Button class="my-4 w-10/12" size="lg" @click="showAddProductView">Add Product</Button>
       </div>
     </div>
 
-    <div class="inventory">
+    <div class="inventory h-screen overflow-y-scroll pb-52">
       <div class="" v-for="(product, i) in authStore.state.inventory" :key="i">
         <!-- <router-link :to="`/inventory/${product.id}`"> -->
-          <div class="product" @click="handleProductClick(product)">
-            <div class="img-wrapper">
-              <!-- <img :src="baseUrl + product.product_image" alt=""> -->
-            </div>
-            <div class="content-wrapper">
-              <h3>{{ product.product_name }}</h3>
-              <p class="dark">&#8358;{{ product.price }}</p>
-              <span>{{ product.description }}</span>
-            </div>
+        <div class="product" @click="handleProductClick(product)">
+          <div class="img-wrapper">
+            <!-- <img :src="baseUrl + product.product_image" alt=""> -->
           </div>
+          <div class="content-wrapper">
+            <h3>{{ product.product_name }}</h3>
+            <p class="dark">&#8358;{{ product.price }}</p>
+            <span>{{ product.description }}</span>
+          </div>
+        </div>
         <!-- </router-link> -->
         <!-- <a>Product Review</a> -->
       </div>
     </div>
 
-    <AddProductFromTemplateView v-if="appStore.showAddProductFromTemplateView" stateKey="showAddProductFromTemplateView" />
-    <AddProductView v-if="appStore.showAddProductView"  stateKey="showAddProductView"  />
-    <ProductDetails v-if="appStore.showProductDetails" stateKey="showProductDetails"  :product="productToEdit"/>
+    <AddProductFromTemplateView v-if="appStore.showAddProductFromTemplateView"
+      stateKey="showAddProductFromTemplateView" />
+    <AddProductView v-if="appStore.showAddProductView" stateKey="showAddProductView" />
+    <ProductDetails v-if="appStore.showProductDetails" stateKey="showProductDetails" :product="productToEdit" />
   </AppLayout>
 </template>
 
@@ -105,18 +102,22 @@ const handleProductClick = (product) => {
   gap: 15px;
   text-align: left;
 }
+
 h3 {
   margin: 0;
   font-size: 20px;
   font-weight: bold;
   color: #445b54;
 }
+
 h3::first-letter {
   text-transform: capitalize;
 }
+
 p {
   margin: 3px 0;
 }
+
 .product span {
   font-weight: 400;
   font-size: 15px;
@@ -133,6 +134,7 @@ p {
   -webkit-box-orient: vertical;
   /* height:56px; */
 }
+
 .inventory a {
   display: block;
   text-decoration: underline !important;
@@ -142,6 +144,7 @@ p {
   color: #4caf50 !important;
   cursor: pointer;
 }
+
 .img-wrapper {
   width: 100%;
   height: 90px;
@@ -149,9 +152,11 @@ p {
   border-radius: 8px;
   overflow: hidden;
 }
+
 .img-wrapper img {
   max-width: 100%;
 }
+
 .content-wrapper {
   margin-top: 5px;
 }

@@ -44,7 +44,7 @@ import {
 import VueMultiselect from 'vue-multiselect'
 import { useAuthStore } from '../stores/auth'
 
-import { createProduct, fethcStoreTemplates, fethcStoreInventory } from '@/services/apiServices'
+import { createProduct, fethcStoreTemplates, fethcStoreInventory, updateProduct } from '@/services/apiServices'
 import { useAppStore } from '@/stores/app'
 
 interface Product {
@@ -344,18 +344,30 @@ const handleSubmit = () => {
 
   // inventoryItem.product_image =
 }
+const new_product = ref({
+  product_name: '',
+  price: '',
+  description: ''
+})
+
+const new_product_id = ref()
+
 
 const createNewProduct = (new_product) => {
   // creates new product with the image only
   createProduct(new_product)
     .then((res) => {
-      $toast.success('product added successfully')
-      authStore.state.inventory.push(res.data)
-      // this.new_product.id = res.data.id
+      // $toast.success('product added successfully')
+      // authStore.state.inventory.push(res.data)
+      console.log(res.data.id)
+      new_product_id.value = res.data.id
+      console.log(new_product.value)
       // this.new_product.temp_id = res.data.id; // when creating multiple products at a time
     })
     .catch((err) => {
       $toast.error('error something happened')
+      console.log(err);
+
     })
     .finally(() => {
       // this.uploading_image = false;
@@ -374,25 +386,51 @@ const close = () => {
 
 
 //
+
 const imageData = ref('')
-const new_product = ref({
-  product_name: '',
-  price: '',
-  description: '',
-})
 
 const saveProduct = (e) => {
-  // let new_product = new FormData()
-  // try {
-  //   new_product.append("product_image", e.target.files[0])
-  //   // this.uploading_image = true
-  // } catch { null }
+  let new_product_formData = new FormData()
+  try {
+    new_product_formData.append("product_image", e.target.files[0])
+    // this.uploading_image = true
+  } catch { null }
 
-  // if (!this.product_to_edit.id) {
-  //   this.new_product.id ? this.editProduct(this.new_product, this.new_product.id) : this.createNewProduct(new_product)
-  // } else {
-  //   this.editProduct(this.edit_product, this.product_to_edit.id)
-  // }
+
+  new_product_id.value ? editProduct(new_product, new_product_id) : createNewProduct(new_product_formData)
+
+}
+
+const editProduct = () => {
+
+  updateProduct({ ...new_product.value, price: Number(new_product.value.price), id: new_product_id.value }, new_product_id.value)
+    .then((res) => {
+      // console.log(res)
+      $toast.success('product added successfully')
+
+    })
+    .catch((err) => {
+      console.log(err);
+      $toast.success('product added successfully')
+      close()
+
+    })
+    .finally(() => {
+      // this.loading = false;
+      // clear new_product.id when done
+    });
+}
+
+const previewImage = (event) => {
+  saveProduct(event)
+  var input = event.target;
+  if (input.files && input.files[0]) {
+    var reader = new FileReader()
+    reader.onload = (e) => {
+      imageData.value = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
 }
 </script>
 
@@ -408,12 +446,15 @@ const saveProduct = (e) => {
           <div class="form">
             <div class="form-group">
               <p class="dark label">Edit Product image</p>
-              <!-- <input class="" type="file" id="editUploadProductImage" name="editUploadProductImage"
-                    @change="previewImage" accept="image/*" /> -->
-              <label for="editUploadProductImage" class="uploadProductImage ">Tap here to change product image</label>
-              <div class="image-preview" v-if="imageData.length > 0">
-                <img class="preview" :src="imageData" alt="preview" />
-              </div>
+              <input class="" type="file" id="editUploadProductImage" name="editUploadProductImage" @change="previewImage"
+                accept="image/*" />
+              <label for="editUploadProductImage">
+                <div class="image-preview" v-if="imageData.length > 0">
+                  <img class="preview" :src="imageData" alt="preview" />
+                </div>
+                <div v-else  class="uploadProductImage bg-gray-200 flex justify-center items-center rounded-md h-20 "> <p>Tap here to change product image</p></div>
+              </label>
+
             </div>
             <div class="form-group">
               <label for="edit-product-name">Product Name</label>
@@ -432,7 +473,7 @@ const saveProduct = (e) => {
               <!-- <Button variant="outline" class="btn-style " @click="editProduct(new_product, product.id)">
                     Save 
                   </Button> -->
-              <Button class="w-full mt-8" @click="editProduct(new_product, product.id)">Create Product</Button>
+              <Button class="w-full mt-8" @click="editProduct">Create Product</Button>
 
             </div>
           </div>
@@ -481,4 +522,5 @@ img {
 p,
 .p {
   color: #9C9C9C;
-}</style>
+}
+</style>

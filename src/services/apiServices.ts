@@ -54,7 +54,7 @@ export const fetchCampaignDetails = (id) => {
 export const fethcStoreInventory = (slug) => {
   return axios({
     method: 'get',
-    url: `${urls.inventoryUrl}/`
+    url: `${urls.inventoryUrl}${slug}/`
   })
 }
 export const fethcStoreTemplates = (slug) => {

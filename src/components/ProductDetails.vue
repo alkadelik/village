@@ -139,9 +139,11 @@ function editProduct(product, id) {
           <hr />
           <div class="product-detail">
             <div class="row">
-              <div class="description">
-                <span>Description</span>
-                <p>{{ product.description }}</p>
+                <div class="col-6">
+                  <span>Description</span>
+                </div>
+                <div class="col-6">
+                  <p>{{ product.description }}</p>
               </div>
             </div>
           </div>
